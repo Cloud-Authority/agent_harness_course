@@ -1,0 +1,4 @@
+_shared/seed/out/
+**/appbook/data/
+**/__pycache__/
+**/*.pyc

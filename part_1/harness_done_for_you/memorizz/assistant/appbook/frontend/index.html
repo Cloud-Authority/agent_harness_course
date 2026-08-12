@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ERPA / MemoRizz Appbook</title>
+  <meta name="description" content="An interactive agent-harness appbook built with MemoRizz and Oracle AI Database." />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("erpa-theme");
+        if (!t) t = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Instrument+Serif&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <button class="menu" id="menu" aria-label="Open chapters">☰</button>
+  <div id="app" class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand"><div class="brand-mark">ER</div><div class="brand-copy"><strong>ERPA</strong><span>MemoRizz · Complete harness</span></div></div>
+      <nav id="chapters" aria-label="Workshop chapters"></nav>
+      <div class="sidebar-foot"><div class="status-chip" id="global-status"><i class="status-dot"></i><span>Warming harness</span></div></div>
+    </aside>
+    <main class="stage" id="stage" tabindex="-1"></main>
+  </div>
+  <footer class="data-explorer" id="data-explorer">
+    <div class="explorer-resizer" id="explorer-resizer" role="separator" aria-label="Resize database explorer" aria-orientation="horizontal" aria-valuemin="220" aria-valuemax="900" aria-valuenow="610" tabindex="0"><i></i></div>
+    <div class="explorer-header">
+      <button class="explorer-toggle" id="explorer-toggle" aria-expanded="false" aria-controls="explorer-body">
+        <span class="explorer-icon">▤</span>
+        <span><strong>Live database explorer</strong><small id="explorer-subtitle">Oracle-shaped tables · waiting for activity</small></span>
+        <span class="explorer-chevron">⌃</span>
+      </button>
+      <span class="transaction-indicator" id="transaction-indicator"><i></i><b>Idle</b></span>
+      <button class="explorer-refresh" id="explorer-refresh" aria-label="Refresh database explorer" title="Refresh database explorer">↻</button>
+    </div>
+    <div class="explorer-body" id="explorer-body">
+      <div class="explorer-tabs" id="explorer-tabs"></div>
+      <div class="explorer-grid">
+        <section><div class="explorer-section-head"><strong id="explorer-table-name">course_inventory</strong><span id="explorer-row-count">0 rows</span></div><div id="explorer-table" class="explorer-table"></div></section>
+        <aside><div class="explorer-section-head"><strong>Transaction journal</strong><span>reads + writes</span></div><div id="transaction-log" class="transaction-log"></div></aside>
+      </div>
+    </div>
+  </footer>
+  <button class="scrim" id="scrim" aria-label="Close menu" hidden></button>
+  <script src="/app.js"></script>
+</body>
+</html>

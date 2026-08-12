@@ -1,0 +1,4 @@
+-r ../appbook/requirements-live.txt
+matplotlib>=3.9
+pandas>=2.2
+jupyterlab>=4.2

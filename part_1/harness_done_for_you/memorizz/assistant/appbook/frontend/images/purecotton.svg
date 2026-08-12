@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img" aria-labelledby="title desc">
+  <title id="title">PureCotton Crew Tee</title><desc id="desc">Stylised chalk heavyweight cotton tee on a clay studio background.</desc>
+  <defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#c49170"/><stop offset="1" stop-color="#e2d3bc"/></linearGradient><linearGradient id="tee" x2="1" y2="1"><stop stop-color="#f3efe5"/><stop offset="1" stop-color="#cfcabb"/></linearGradient><filter id="s"><feDropShadow dx="0" dy="24" stdDeviation="22" flood-opacity=".23"/></filter></defs>
+  <rect width="800" height="1000" fill="url(#bg)"/><path d="M0 760c172-95 394-102 800-3v243H0z" fill="#9b6b51" opacity=".3"/><rect x="560" y="70" width="170" height="260" rx="85" fill="#f1e4cf" opacity=".22"/>
+  <g filter="url(#s)"><path d="M300 240l100-42 100 42 131 102-74 112-67-45 19 375H291l19-375-67 45-74-112z" fill="url(#tee)" stroke="#b9b2a1" stroke-width="5"/><path d="M348 221c9 69 95 69 104 0" fill="none" stroke="#aaa393" stroke-width="8"/><path d="M310 432h180M304 568h192M297 704h206" stroke="#dad5c9" stroke-width="3"/><path d="M246 342l64 67M554 342l-64 67" stroke="#c1baa9" stroke-width="4"/></g>
+  <text x="48" y="70" fill="#4f372c" font-family="monospace" font-size="18" letter-spacing="5">KATA / ESSENTIAL FORM</text><text x="48" y="930" fill="#fffaf0" font-family="serif" font-size="46">PureCotton</text>
+</svg>

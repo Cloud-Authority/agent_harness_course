@@ -1,0 +1,49 @@
+services:
+  oracle:
+    # Oracle's OAMP 26.6 local guide uses this Oracle AI Database Free image.
+    image: container-registry.oracle.com/database/free:latest-lite
+    environment:
+      ORACLE_PWD: ${ORACLE_PASSWORD:-OracleSystemPw_2026}
+      ORA_AGENT_PWD: ${ORA_AGENT_PWD:-AgentPw_2026}
+    ports:
+      - "1521:1521"
+    volumes:
+      - erpa-oracle-data:/opt/oracle/oradata
+      - ./docker/oracle/init:/opt/oracle/scripts/setup:ro
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/oracle/checkDBStatus.sh >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 120s
+
+  erpa:
+    build:
+      context: ../../..
+      dockerfile: part_1/custom_harness/appbook/Dockerfile
+    environment:
+      ERPA_MODE: live
+      ERPA_MEMORY_BACKEND: oamp
+      ERPA_CACHE_ENABLED: "true"
+      ORA_DSN: oracle:1521/FREEPDB1
+      ORA_AGENT_USER: AGENT
+      ORA_AGENT_PWD: ${ORA_AGENT_PWD:-AgentPw_2026}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:?Set ANTHROPIC_API_KEY in the shell or repository .env}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-opus-4-8}
+      E2B_API_KEY: ${E2B_API_KEY:?Set E2B_API_KEY in the shell or repository .env}
+      LANGSMITH_API_KEY: ${LANGSMITH_API_KEY:?Set LANGSMITH_API_KEY in the shell or repository .env}
+      LANGSMITH_TRACING: "true"
+      LANGSMITH_PROJECT: ${LANGSMITH_PROJECT:-erpa-custom-harness-appbook}
+      OAMP_LLM_MODEL: ${OAMP_LLM_MODEL:-anthropic/claude-opus-4-8}
+      OAMP_EMBED_BACKEND: indb
+      INDB_EMBED_MODEL: ${INDB_EMBED_MODEL:-ALL_MINILM_L12_V2}
+      INDB_EMBED_DIM: "384"
+      OAMP_MEMORY_STORE_ID: ${OAMP_MEMORY_STORE_ID:-ERPAMEM}
+    depends_on:
+      oracle:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+
+volumes:
+  erpa-oracle-data:

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ERPA / Custom Harness Appbook</title>
+  <meta name="description" content="An interactive appbook: an enterprise assistant, layer by layer." />
+  <link rel="icon" href="data:," />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("erpa-theme");
+        if (!t) t = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Instrument+Serif&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <button class="menu" id="menu" aria-label="Open chapters">☰</button>
+  <div id="app" class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand"><div class="brand-mark">ER</div><div class="brand-copy"><strong>ERPA</strong><span>Claude + Oracle custom harness</span></div></div>
+      <nav id="chapters" aria-label="Workshop chapters"></nav>
+      <div class="sidebar-foot"><div class="status-chip" id="global-status"><i class="status-dot"></i><span>Warming harness</span></div></div>
+    </aside>
+    <main class="stage" id="stage" tabindex="-1"></main>
+  </div>
+  <button class="scrim" id="scrim" aria-label="Close menu" hidden></button>
+  <section class="data-explorer" id="data-explorer" aria-label="Database explorer">
+    <div class="explorer-resizer" id="explorer-resizer" role="separator" aria-orientation="horizontal" aria-label="Resize data explorer" title="Drag to resize the data explorer"><i></i></div>
+    <button class="explorer-handle" id="explorer-toggle" aria-expanded="false" aria-controls="explorer-body">
+      <span class="explorer-title"><i class="db-glyph">DB</i><strong>Data explorer</strong><span id="explorer-summary">Connecting to the application database…</span></span>
+      <span class="explorer-live"><i class="status-dot"></i><span id="explorer-live-label">Live transactions</span></span>
+      <span class="explorer-chevron" aria-hidden="true">⌃</span>
+    </button>
+    <div class="explorer-body" id="explorer-body" hidden>
+      <aside class="explorer-tables">
+        <div class="explorer-section-head"><span>Database tables</span><button id="explorer-refresh" title="Refresh table catalogue">↻</button></div>
+        <label class="explorer-search"><span class="sr-only">Filter tables</span><input id="explorer-filter" placeholder="Filter tables…" /></label>
+        <div class="table-list" id="explorer-table-list"></div>
+      </aside>
+      <section class="explorer-data">
+        <div class="explorer-toolbar">
+          <div><span class="eyebrow" id="explorer-layer">SELECT A TABLE</span><h2 id="explorer-table-name">Application database</h2></div>
+          <div class="explorer-pagination"><button id="explorer-prev">←</button><span id="explorer-page">—</span><button id="explorer-next">→</button></div>
+        </div>
+        <div class="data-grid-wrap" id="explorer-grid"><div class="explorer-empty">Choose a table to inspect its real columns and rows.</div></div>
+      </section>
+      <aside class="activity-rail">
+        <div class="explorer-section-head"><span>Transaction activity</span><span class="live-word">LIVE</span></div>
+        <div class="activity-list" id="activity-list"></div>
+      </aside>
+    </div>
+  </section>
+  <script src="/app.js"></script>
+</body>
+</html>

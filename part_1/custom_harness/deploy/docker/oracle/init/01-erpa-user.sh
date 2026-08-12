@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Keep SQL identifier quoting predictable for this workshop-only bootstrap user.
+case "${ORA_AGENT_PWD}" in
+  *[!A-Za-z0-9_]*)
+    echo "ORA_AGENT_PWD may contain only letters, numbers and underscores for local Compose setup." >&2
+    exit 1
+    ;;
+esac
+
+sqlplus -s / as sysdba <<SQL
+WHENEVER SQLERROR EXIT SQL.SQLCODE
+ALTER SESSION SET CONTAINER=FREEPDB1;
+
+DECLARE
+  tablespace_count NUMBER;
+  agent_datafile VARCHAR2(1000);
+BEGIN
+  SELECT COUNT(*) INTO tablespace_count FROM dba_tablespaces WHERE tablespace_name = 'AGENT_DATA';
+  IF tablespace_count = 0 THEN
+    SELECT REPLACE(file_name, 'system01.dbf', 'agent_data01.dbf')
+      INTO agent_datafile FROM dba_data_files WHERE tablespace_name = 'SYSTEM';
+    EXECUTE IMMEDIATE 'CREATE TABLESPACE AGENT_DATA DATAFILE ''' || agent_datafile ||
+      ''' SIZE 64M AUTOEXTEND ON NEXT 64M MAXSIZE UNLIMITED SEGMENT SPACE MANAGEMENT AUTO';
+  END IF;
+END;
+/
+
+DECLARE
+  user_count NUMBER;
+BEGIN
+  SELECT COUNT(*) INTO user_count FROM dba_users WHERE username = 'AGENT';
+  IF user_count = 0 THEN
+    EXECUTE IMMEDIATE 'CREATE USER AGENT IDENTIFIED BY "${ORA_AGENT_PWD}" DEFAULT TABLESPACE AGENT_DATA TEMPORARY TABLESPACE TEMP';
+  END IF;
+END;
+/
+
+ALTER USER AGENT DEFAULT TABLESPACE AGENT_DATA TEMPORARY TABLESPACE TEMP;
+
+GRANT CREATE SESSION, CREATE TABLE, CREATE SEQUENCE, CREATE VIEW,
+      CREATE PROCEDURE, CREATE JOB, CREATE TRIGGER, CREATE MINING MODEL,
+      CREATE DOMAIN, SELECT_CATALOG_ROLE TO AGENT;
+GRANT UNLIMITED TABLESPACE TO AGENT;
+GRANT EXECUTE ON DBMS_SCHEDULER TO AGENT;
+GRANT EXECUTE ON DBMS_VECTOR TO AGENT;
+GRANT EXECUTE ON DBMS_VECTOR_CHAIN TO AGENT;
+GRANT SELECT ON SYS.V_\$SQL TO AGENT;
+SQL

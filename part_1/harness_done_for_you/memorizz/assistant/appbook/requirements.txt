@@ -1,0 +1,5 @@
+# Stage-safe local appbook. Install requirements-live.txt before the event.
+fastapi>=0.110
+uvicorn>=0.27
+# Optional: the app falls back to Starlette StreamingResponse when this is absent.
+sse-starlette>=2.0

@@ -1,0 +1,76 @@
+{
+  "_comment": "Seeded agent memory. Loaded identically by both builds before the demo.",
+  "user": {
+    "id": "planner-01",
+    "name": "Alex Moreau",
+    "role": "Merchandising Planner"
+  },
+  "semantic": [
+    {
+      "fact": "Owns the Outerwear and Tops categories",
+      "why": "scopes every answer"
+    },
+    {
+      "fact": "Owns the UK and EU regions",
+      "why": "filters the morning brief"
+    },
+    {
+      "fact": "Restock threshold: flag anything below 2 weeks' cover",
+      "why": "makes alerts personal, not generic"
+    },
+    {
+      "fact": "Ignores SKUs under GBP 5,000 trailing 30-day revenue",
+      "why": "noise floor"
+    },
+    {
+      "fact": "Brief format: bullets, top 3 per section, numbers first",
+      "why": "visible in output style"
+    },
+    {
+      "fact": "Timezone Europe/London; no meetings before 10:00",
+      "why": "calendar bookings land correctly"
+    }
+  ],
+  "episodic": [
+    {
+      "when": "T-1 day",
+      "event": "Morning brief flagged 4 restock items; planner actioned Berlin ThermaCore"
+    },
+    {
+      "when": "T-2 days",
+      "event": "Morning brief flagged PureCotton London cover and EU margin compression; both carried into weekly review"
+    },
+    {
+      "when": "T-3 days",
+      "event": "Morning brief flagged the ThermaCore M/L size-curve imbalance and no new markdown decisions"
+    },
+    {
+      "when": "T-1 day",
+      "event": "Raised PO for Berlin ThermaCore; PO still open",
+      "critical": true,
+      "why": "turn 1 must NOT re-flag this"
+    },
+    {
+      "when": "T-4 days",
+      "event": "Decided to hold markdown on AirLight until after the JP drop"
+    },
+    {
+      "when": "T-9 days",
+      "event": "Asked to stop being shown Accessories in the weekly review"
+    }
+  ],
+  "procedural": [
+    {
+      "skill": "compose_morning_brief",
+      "steps": "sections in order: restock \u00b7 top movers \u00b7 anomalies; omit anything already actioned"
+    },
+    {
+      "skill": "restock_recommendation",
+      "steps": "SKU \u00b7 cover weeks \u00b7 supplier lead time \u00b7 recommended qty \u00b7 rationale"
+    },
+    {
+      "skill": "weekly_review_prep",
+      "steps": "pull last review notes from Notion; add this week's deltas; list open decisions"
+    }
+  ]
+}

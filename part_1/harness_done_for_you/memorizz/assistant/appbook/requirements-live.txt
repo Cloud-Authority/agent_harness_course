@@ -1,0 +1,4 @@
+-r requirements.txt
+openai>=1.40
+memorizz[oracle,sandbox-e2b,ui]>=0.5.0
+pandas>=2.0

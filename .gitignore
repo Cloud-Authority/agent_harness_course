@@ -1,0 +1,32 @@
+# Secrets and local credentials
+.env
+.env.*
+!.env.example
+credentials.json
+token.json
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Generated workshop state
+part_1/_shared/seed/out/
+part_1/**/appbook/data/
+part_1/**/appbook/artifacts/
+
+# Notebooks, frontend builds, editors, and operating systems
+.ipynb_checkpoints/
+node_modules/
+.next/
+.DS_Store
+.idea/
+.vscode/

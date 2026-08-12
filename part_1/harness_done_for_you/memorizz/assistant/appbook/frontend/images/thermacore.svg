@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img" aria-labelledby="title desc">
+  <title id="title">ThermaCore Jacket</title><desc id="desc">Stylised midnight technical jacket on a warm studio background.</desc>
+  <defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#c9bda9"/><stop offset="1" stop-color="#8d9b91"/></linearGradient><linearGradient id="coat" x2="1" y2="1"><stop stop-color="#26363a"/><stop offset="1" stop-color="#0d161b"/></linearGradient><filter id="s"><feDropShadow dx="0" dy="24" stdDeviation="22" flood-opacity=".26"/></filter></defs>
+  <rect width="800" height="1000" fill="url(#bg)"/><circle cx="620" cy="180" r="240" fill="#e5dccd" opacity=".24"/><path d="M110 870c142-87 334-116 578-68v198H110z" fill="#6d776f" opacity=".45"/>
+  <g filter="url(#s)"><path d="M284 222l116-56 116 56 86 113-77 90-32-42 35 408H272l35-408-32 42-77-90z" fill="url(#coat)" stroke="#495d61" stroke-width="5"/><path d="M348 196l52 91 52-91" fill="#121f23" stroke="#718185" stroke-width="4"/><path d="M400 287v504M287 468h226M277 592h246" stroke="#59686b" stroke-width="4" opacity=".75"/><path d="M309 382l91 59 91-59" fill="none" stroke="#778689" stroke-width="4"/><path d="M328 500h-46M472 500h46" stroke="#a3b0b1" stroke-width="5"/><circle cx="400" cy="344" r="7" fill="#b7ff5a"/></g>
+  <text x="48" y="70" fill="#263129" font-family="monospace" font-size="18" letter-spacing="5">KATA / WEATHER SYSTEMS</text><text x="48" y="930" fill="#f5f0e8" font-family="serif" font-size="46">ThermaCore</text>
+</svg>

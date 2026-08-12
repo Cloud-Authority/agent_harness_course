@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img" aria-labelledby="title desc">
+  <title id="title">WarmLayer Gilet</title><desc id="desc">Stylised moss insulated gilet on an editorial green background.</desc>
+  <defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#d1cfaa"/><stop offset="1" stop-color="#667969"/></linearGradient><linearGradient id="vest" x2="1" y2="1"><stop stop-color="#62744e"/><stop offset="1" stop-color="#33402c"/></linearGradient><filter id="s"><feDropShadow dx="0" dy="24" stdDeviation="22" flood-opacity=".25"/></filter></defs>
+  <rect width="800" height="1000" fill="url(#bg)"/><path d="M0 170L800 0v260L0 430z" fill="#f2ecd8" opacity=".16"/><circle cx="132" cy="780" r="205" fill="#27382e" opacity=".18"/>
+  <g filter="url(#s)"><path d="M312 211l88-41 88 41 97 139-71 64-24-39 29 412H281l29-412-24 39-71-64z" fill="url(#vest)" stroke="#768365" stroke-width="5"/><path d="M350 192l50 95 50-95" fill="#33402c" stroke="#a3ad91" stroke-width="4"/><path d="M400 286v501M298 438h204M291 557h218M286 676h228" stroke="#869376" stroke-width="4" opacity=".75"/><path d="M324 494h-35M476 494h35" stroke="#c4ccb2" stroke-width="5"/><circle cx="400" cy="340" r="7" fill="#d9ecb3"/></g>
+  <text x="48" y="70" fill="#293528" font-family="monospace" font-size="18" letter-spacing="5">KATA / FIELD NOTES</text><text x="48" y="930" fill="#f5f0e8" font-family="serif" font-size="46">WarmLayer</text>
+</svg>

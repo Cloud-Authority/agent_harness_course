@@ -1,0 +1,5 @@
+# Stage-safe local appbook. Install requirements-live.txt in the pre-provisioned environment.
+fastapi>=0.110
+uvicorn>=0.27
+sse-starlette>=2.0
+anthropic>=0.74
