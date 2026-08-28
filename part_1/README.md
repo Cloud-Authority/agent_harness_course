@@ -66,6 +66,8 @@ ANTHROPIC_API_KEY=... E2B_API_KEY=... LANGSMITH_API_KEY=... \
 
 ## Teaching artifacts
 
+- [`guides/`](guides/) contains the foundation and advanced Harness Engineering for
+  AI Agents presentation guides.
 - Both complete notebooks have saved output after every code cell and narrative between
   every step: what it is, why it matters, what to watch.
 - `custom_harness/stages/` contains six independently runnable stage scripts.
@@ -73,9 +75,9 @@ ANTHROPIC_API_KEY=... E2B_API_KEY=... LANGSMITH_API_KEY=... \
 - `scripts/cache_measurement.py` proves a warm hit has no model span.
 - `scripts/restart_proof.py` uses two actual Python processes.
 - `custom_harness/deploy/` contains the Docker/OCI, DBMS_SCHEDULER and Vercel path.
-- `advanced/` contains five narrated notebooks, four appbooks, a requirement matrix,
-  an instructor runbook, E2B and fair-evaluation labs, offline acceptance tests, and a
-  three-process Oracle recovery proof.
+- `advanced/` contains five narrated notebooks, four appbooks, an instructor runbook,
+  E2B and fair-evaluation labs, offline acceptance tests, and a three-process Oracle
+  recovery proof.
 
 ## Safety and course scope
 
