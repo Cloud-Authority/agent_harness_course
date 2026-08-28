@@ -22,6 +22,20 @@ htmlcov/
 part_1/_shared/seed/out/
 part_1/**/appbook/data/
 part_1/**/appbook/artifacts/
+part_1/advanced/.data/
+part_1/advanced/total_recall/notebook/context_growth.png
+part_1/advanced/total_recall/notebook/eval_results.png
+part_1/advanced/total_recall/appbook/images/section_2.png
+part_1/advanced/total_recall/appbook/images/total_recall.png
+
+# Internal advanced-track authoring and validation artifacts
+part_1/advanced/SPEC_COVERAGE.md
+part_1/advanced/VALIDATION_REPORT.md
+part_1/advanced/scripts/build_notebooks.py
+part_1/advanced/scripts/live_deep_research_notebook.py
+part_1/advanced/scripts/metaharness_notebook.py
+part_1/advanced/scripts/refine_total_recall.py
+part_1/advanced/scripts/workflow_notebook.py
 
 # Notebooks, frontend builds, editors, and operating systems
 .ipynb_checkpoints/

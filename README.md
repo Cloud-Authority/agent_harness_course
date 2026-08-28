@@ -13,6 +13,7 @@ against the same synthetic Kata dataset:
 |---|---|---|
 | [MemoRizz build](part_1/harness_done_for_you/memorizz/assistant/) | A packaged harness with the major decisions made for you | Learning the anatomy of a complete harness |
 | [Custom build](part_1/custom_harness/) | An explicit, modular LangGraph-style harness | Understanding how each layer is assembled |
+| [Advanced track](part_1/advanced/) | Durable LangGraph/Oracle workflows, Tavily research, MemoRizz MetaHarness, and E2B | Recovery, evidence learning, sandbox governance, and fair evaluation |
 
 Both paths demonstrate working, episodic, semantic, and procedural memory; trusted
 tools and progressive capability disclosure; sandboxed execution; semantic caching;
@@ -49,10 +50,22 @@ For the narrated exercises, open
 or [`erpa_custom_complete.ipynb`](part_1/custom_harness/notebook/erpa_custom_complete.ipynb)
 in Jupyter.
 
+The advanced continuation has four appbooks and five narrated notebooks, including a
+fair-evaluation capstone. Install its published PyPI dependencies and begin with the
+[advanced guide](part_1/advanced/README.md):
+
+```bash
+.venv/bin/python -m pip install --upgrade -r part_1/advanced/requirements.txt
+.venv/bin/python -m pytest -q part_1/advanced/tests
+```
+
 ## Repository guide
 
 - [`part_1/README.md`](part_1/README.md) explains participant setup, the two builds,
   and the workshop architecture.
+- [`part_1/advanced/`](part_1/advanced/) implements the advanced O'Reilly curriculum
+  with OracleSaver/OracleStore, Tavily, GPT-5.5, Claude Opus 5, E2B, and MemoRizz
+  0.6.3, plus a fair harness-evaluation capstone.
 - [`part_1/custom_harness/stages/`](part_1/custom_harness/stages/) contains six small,
   independently runnable construction stages.
 - [`part_1/_shared/`](part_1/_shared/) is the source of truth used by both builds for

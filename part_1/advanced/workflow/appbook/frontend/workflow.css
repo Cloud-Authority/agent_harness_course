@@ -1,0 +1,86 @@
+.notebook-map {
+  overflow: hidden;
+}
+
+.notebook-map code {
+  color: var(--accent);
+  font: 11px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.notebook-map-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(310px, .7fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.workflow-reference {
+  margin: 0;
+  padding: clamp(10px, 2vw, 22px);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #f8f8f7;
+}
+
+.workflow-reference img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 9px;
+}
+
+.workflow-reference figcaption {
+  margin-top: 10px;
+  color: #56605d;
+  text-align: center;
+  font: 10px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.trajectory-list {
+  display: grid;
+  gap: 10px;
+}
+
+.trajectory-item {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  gap: 11px;
+  align-items: start;
+  padding: 15px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel-2);
+}
+
+.trajectory-index {
+  color: var(--accent);
+  font: 10px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.trajectory-item strong {
+  font-size: 13px;
+}
+
+.trajectory-item p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+@media (max-width: 1040px) {
+  .notebook-map-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .trajectory-item {
+    grid-template-columns: 28px 1fr;
+  }
+
+  .trajectory-item .badge {
+    grid-column: 2;
+    justify-self: start;
+  }
+}

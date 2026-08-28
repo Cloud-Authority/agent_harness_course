@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Live Deep Research · Advanced Harness Engineering</title>
+  <link rel="stylesheet" href="/shared/course.css">
+  <link rel="stylesheet" href="/shared/inspector.css">
+  <style>
+    :root{--accent:#75e8bd;--accent-soft:rgba(117,232,189,.12);--signal:#9eb9ff;--panel:#0b1515;--line:#28413d}
+    .hero h1{max-width:920px}.hero .lede{max-width:880px}
+    .runtime-strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.runtime-strip .badge{font-size:11px}
+    .confirm-row{display:flex;gap:10px;align-items:flex-start;padding:13px 14px;border:1px solid var(--line);border-radius:10px;background:rgba(117,232,189,.05)}
+    .confirm-row input{margin-top:3px}.confirm-row span{font-size:13px;line-height:1.45;color:var(--muted)}
+    .flow-card{grid-column:1/-1}.flow-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    .flow-legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted)}.legend-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+    .flow-canvas{position:relative;height:570px;overflow:hidden;border:1px solid var(--line);border-radius:14px;background:radial-gradient(circle at 50% 46%,rgba(117,232,189,.08),transparent 34%),linear-gradient(180deg,rgba(255,255,255,.018),transparent)}
+    #flow-edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}.flow-edge{stroke:#2d4b46;stroke-width:1.5;fill:none;transition:.25s}.flow-edge.active{stroke:var(--accent);stroke-width:2.2;filter:drop-shadow(0 0 5px rgba(117,232,189,.42))}
+    .flow-node{position:absolute;transform:translate(-50%,-50%);width:132px;min-height:68px;border:1px solid #29443f;border-radius:12px;background:#0d1a18;color:var(--text);padding:10px 9px;text-align:left;transition:transform .2s,border-color .2s,box-shadow .2s,background .2s;z-index:2}
+    .flow-node .node-kind{display:block;text-transform:uppercase;letter-spacing:.12em;font-size:9px;color:var(--muted);margin-bottom:5px}.flow-node .node-label{display:block;font-size:13px;font-weight:700}.flow-node .node-detail{display:block;font-size:10px;color:var(--muted);line-height:1.3;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .flow-node.clickable{cursor:pointer}.flow-node.clickable:hover,.flow-node.selected{transform:translate(-50%,-50%) scale(1.045);border-color:var(--signal);box-shadow:0 0 0 3px rgba(158,185,255,.1)}
+    .flow-node.running{border-color:#efc66c;background:#211b0e;box-shadow:0 0 24px rgba(239,198,108,.13)}.flow-node.completed{border-color:var(--accent);background:#0c211a}.flow-node.failed{border-color:#ff8078;background:#251211}.flow-node.running:after{content:"";position:absolute;right:9px;top:9px;width:7px;height:7px;border-radius:50%;background:#efc66c;box-shadow:0 0 0 0 rgba(239,198,108,.5);animation:pulse 1.25s infinite}
+    @keyframes pulse{70%{box-shadow:0 0 0 8px rgba(239,198,108,0)}100%{box-shadow:0 0 0 0 rgba(239,198,108,0)}}
+    .event-ledger{max-height:510px;overflow:auto}.event{display:grid;grid-template-columns:42px 132px 1fr;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:12px}.event-seq{color:var(--accent);font-family:var(--mono)}.event-type{font-family:var(--mono);color:var(--signal)}.event-detail{color:var(--muted)}
+    .report{white-space:pre-wrap;line-height:1.65}.source{padding:13px 0;border-bottom:1px solid rgba(255,255,255,.06)}.source a{font-weight:700}.source-meta{font-size:10px;color:var(--muted);margin-top:5px}.source-copy{font-size:12px;line-height:1.5;margin-top:7px}
+    .review-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.check{display:flex;justify-content:space-between;gap:10px;padding:10px;border:1px solid var(--line);border-radius:8px;font-size:11px}.check.pass{border-color:rgba(117,232,189,.35)}.check.fail{border-color:rgba(255,128,120,.4)}
+    dialog{width:min(1100px,94vw);height:min(820px,90vh);border:1px solid #36554f;border-radius:16px;background:#081210;color:var(--text);padding:0;box-shadow:0 30px 100px rgba(0,0,0,.6)}dialog::backdrop{background:rgba(0,0,0,.72);backdrop-filter:blur(4px)}
+    .context-head{position:sticky;top:0;z-index:3;display:flex;justify-content:space-between;gap:12px;padding:18px 20px;border-bottom:1px solid var(--line);background:#0b1715}.context-body{padding:18px 20px;overflow:auto;height:calc(100% - 78px)}.context-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.context-section{border:1px solid var(--line);border-radius:10px;margin-bottom:10px;overflow:hidden}.context-section summary{cursor:pointer;padding:13px 15px;font-weight:700;background:rgba(255,255,255,.02)}.context-section pre{margin:0;padding:14px;max-height:360px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px;line-height:1.45}.close-button{border:1px solid var(--line);background:transparent;color:var(--text);border-radius:8px;padding:8px 11px;cursor:pointer}
+    .empty-state{padding:26px;text-align:center;color:var(--muted)}
+    @media(max-width:850px){.flow-canvas{height:760px;overflow:auto}.review-grid{grid-template-columns:1fr}.event{grid-template-columns:34px 105px 1fr}.flow-node{width:116px}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="/"><span class="brand-mark">A2</span><span>Advanced Harness Engineering</span></a>
+      <nav class="nav" aria-label="Sections">
+        <a href="http://127.0.0.1:8010">Workflow</a>
+        <a class="active" href="http://127.0.0.1:8011">Deep research</a>
+        <a href="http://127.0.0.1:8012">MetaHarness</a>
+        <a href="http://127.0.0.1:8013">Total Recall</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div>
+        <div class="eyebrow">02 / MemoRizz deep-research mode</div>
+        <h1>Watch a research request become evidence, memory, and a decision brief.</h1>
+        <p class="lede">The root MemoRizz MemAgent generates the task decomposition. Four GPT-5.5 specialists execute through Tavily and least-privilege E2B, coordinate in Oracle shared memory, and pass their findings to a GPT-5.5 synthesis agent.</p>
+        <div class="runtime-strip">
+          <span class="badge accent">published MemoRizz</span><span class="badge">GPT-5.5 × 6</span><span class="badge">OpenAI embeddings</span><span class="badge">Oracle-only memory</span><span class="badge">live Tavily</span><span class="badge">E2B isolated execution</span>
+        </div>
+      </div>
+      <aside class="status-card">
+        <div class="status-row"><span id="status-dot" class="status-dot"></span><span id="status-title" class="status-title">Connecting…</span></div>
+        <div id="status-detail" class="status-detail">Checking MemoRizz, Oracle, Tavily, OpenAI, and E2B</div>
+      </aside>
+    </section>
+
+    <section class="grid">
+      <article class="card two-thirds">
+        <div class="card-head"><div><h2>Enterprise platform due diligence</h2><p class="kicker">The question is live; there is no fixture or offline path.</p></div><span class="badge accent">operator controlled</span></div>
+        <div class="form-grid">
+          <label class="wide">Research question<textarea id="question">How are production agent-harness platforms differentiating on durability, memory, tool governance, and multi-agent research?</textarea></label>
+          <label class="wide">Human focus<input id="focus" value="enterprise reliability and measurable operational evidence"></label>
+          <label>Include domains<input id="include" placeholder="optional: docs.oracle.com, openai.com"></label>
+          <label>Exclude domains<input id="exclude" placeholder="optional: low-trust.example"></label>
+          <label class="wide confirm-row"><input id="confirm" type="checkbox"><span>I understand this starts live GPT-5.5, OpenAI embedding, Tavily, E2B, and Oracle activity. The root model—not a hard-coded Python list—will generate the specialist assignments.</span></label>
+        </div>
+        <div class="controls"><button id="start" class="button primary" disabled>Run live deep research</button></div>
+        <div id="run-status" class="notice" style="margin-top:16px">Awaiting a confirmed research request.</div>
+      </article>
+
+      <article class="card third">
+        <div class="card-head"><div><h2>What the harness owns</h2><p class="kicker">The model proposes; the surrounding system makes work operational.</p></div></div>
+        <div class="stack">
+          <div class="row"><span class="row-label">Planning</span><span class="row-value">root model + capability map</span></div>
+          <div class="row"><span class="row-label">Execution</span><span class="row-value">parallel MemAgents</span></div>
+          <div class="row"><span class="row-label">Private state</span><span class="row-value">Oracle per agent</span></div>
+          <div class="row"><span class="row-label">Team state</span><span class="row-value">Oracle blackboard</span></div>
+          <div class="row"><span class="row-label">Safety</span><span class="row-value">bounded E2B</span></div>
+          <div class="row"><span class="row-label">Completion</span><span class="row-value">host Python checks</span></div>
+        </div>
+        <pre id="architecture" class="code" style="white-space:pre-wrap">Loading architecture…</pre>
+      </article>
+
+      <article class="card flow-card">
+        <div class="flow-toolbar">
+          <div><h2>Live execution flow</h2><p class="kicker">Click any agent to inspect its assembled context, private memory, tools, and shared-memory view.</p></div>
+          <div class="flow-legend"><span><i class="legend-dot" style="background:#47615d"></i>pending</span><span><i class="legend-dot" style="background:#efc66c"></i>running</span><span><i class="legend-dot" style="background:#75e8bd"></i>completed</span><span><i class="legend-dot" style="background:#ff8078"></i>failed</span></div>
+        </div>
+        <div id="flow-canvas" class="flow-canvas" aria-label="Interactive agent execution graph">
+          <svg id="flow-edges" aria-hidden="true"></svg>
+          <div id="flow-empty" class="empty-state">The graph activates when a live run starts.</div>
+        </div>
+      </article>
+
+      <article class="card half">
+        <div class="card-head"><div><h2>Run measurements</h2><p class="kicker">Operational evidence, not a claim that every conclusion is correct.</p></div></div>
+        <div id="metrics" class="metric-grid"><div class="metric"><div class="metric-value">—</div><div class="metric-label">awaiting run</div></div></div>
+        <div id="review" class="review-grid" style="margin-top:14px"></div>
+      </article>
+
+      <article class="card half">
+        <div class="card-head"><div><h2>Streaming event ledger</h2><p class="kicker">Planner, agent, search, sandbox, synthesis, memory, and review transitions.</p></div></div>
+        <div id="events" class="event-ledger"><div class="empty">No events yet.</div></div>
+      </article>
+
+      <article class="card two-thirds">
+        <div class="card-head"><div><h2>Evidence-bound decision brief</h2><p class="kicker">Produced only after all accepted specialist reports reach synthesis.</p></div></div>
+        <div id="report" class="empty">The live report will appear here.</div>
+      </article>
+
+      <article class="card third">
+        <div class="card-head"><div><h2>Root-generated assignments</h2><p class="kicker">Created by MemoRizz TaskDecomposer through the root GPT-5.5 provider.</p></div></div>
+        <div id="plan" class="stack"><div class="empty">No plan generated.</div></div>
+      </article>
+
+      <article class="card">
+        <div class="card-head"><div><h2>Audited Tavily evidence</h2><p class="kicker">Canonical URLs retain role, query, provider, retrieval time, and content hash.</p></div></div>
+        <div id="evidence" class="empty">No evidence retrieved.</div>
+      </article>
+    </section>
+    <footer class="footer">MemoRizz DeepResearchOrchestrator · GPT-5.5 · Tavily · E2B · OpenAI embeddings · Oracle AI Database</footer>
+  </main>
+
+  <dialog id="context-dialog">
+    <div class="context-head"><div><div class="eyebrow">Agent context inspector</div><h2 id="context-title">Agent</h2></div><button id="context-close" class="close-button">Close</button></div>
+    <div class="context-body"><div id="context-content" class="empty-state">Select an agent.</div></div>
+  </dialog>
+  <div id="toast" class="toast"></div>
+  <div id="advanced-inspector"></div>
+  <script src="/shared/inspector.js" defer></script>
+  <script src="/app.js"></script>
+</body>
+</html>

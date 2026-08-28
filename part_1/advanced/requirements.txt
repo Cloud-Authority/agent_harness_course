@@ -1,0 +1,23 @@
+# Published packages only. Versions were resolved from PyPI on 2026-08-25.
+# The E2B extra installs the SDK range tested by this MemoRizz release.
+memorizz[sandbox-e2b]==0.6.3
+langgraph==1.2.11
+langgraph-oracledb==1.0.1
+# Required by the self-contained Total Recall notebook and layered appbook.
+langchain>=1.2,<2
+langchain-openai>=1.1,<2
+langchain-oracledb>=1.5,<2
+matplotlib>=3.10,<4
+pandas>=2.3,<4
+oracleagentmemory==26.6.0
+oracledb>=4.0.1,<5
+tavily-python==0.7.27
+fastapi>=0.141,<1
+uvicorn>=0.40,<1
+# Oracle Agent Memory 26.6 currently depends on the OpenAI 2.x SDK.
+openai>=2.20,<3
+anthropic==1.0.0
+python-dotenv>=1.2,<2
+nbformat>=5.10,<6
+jupyterlab>=4.5,<5
+pytest>=9,<10

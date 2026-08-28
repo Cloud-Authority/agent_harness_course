@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Live MetaHarness · Advanced Harness Engineering</title>
+  <link rel="stylesheet" href="/shared/course.css">
+  <link rel="stylesheet" href="/shared/inspector.css">
+  <style>
+    :root{--accent:#7ee7c2;--accent-soft:rgba(126,231,194,.12);--signal:#ffca80;--flow:#182a31;--muted:#8ea7ad}
+    .hero{align-items:end}.hero h1{max-width:850px}.lede{max-width:800px}
+    .query-card{display:grid;grid-template-columns:minmax(0,1fr) 220px auto;gap:12px;align-items:end}
+    .field{display:grid;gap:8px}.field label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+    textarea,select{width:100%;border:1px solid rgba(255,255,255,.14);border-radius:12px;background:#0c171c;color:#eef7f4;padding:13px 14px;font:inherit;outline:none}
+    textarea{min-height:92px;resize:vertical;line-height:1.5}textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+    .live-note{font-size:12px;color:var(--signal);margin-top:12px}.flow-card{overflow:hidden}
+    .flow-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}.execution-id{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:var(--muted)}
+    .flow{display:grid;grid-template-columns:minmax(130px,.72fr) 40px minmax(480px,2.2fr) 40px minmax(150px,.85fr) 40px minmax(130px,.72fr);align-items:center;gap:0;min-height:390px}
+    .flow-arrow{height:2px;background:rgba(255,255,255,.16);position:relative}.flow-arrow::after{content:"";position:absolute;right:-1px;top:-4px;border-left:8px solid rgba(255,255,255,.28);border-top:5px solid transparent;border-bottom:5px solid transparent}
+    .meta-boundary{border:1px solid rgba(126,231,194,.35);background:linear-gradient(145deg,rgba(126,231,194,.07),rgba(8,18,22,.84));border-radius:20px;padding:16px;min-height:330px;box-shadow:inset 0 0 45px rgba(126,231,194,.025)}
+    .meta-title{width:100%;display:flex;align-items:center;justify-content:space-between;border:0;background:none;color:#eef7f4;padding:0 2px 13px;cursor:pointer;text-align:left}.meta-title small{display:block;color:var(--muted);margin-top:4px}
+    .meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.harness-group{grid-column:1/-1;border:1px dashed rgba(255,255,255,.16);border-radius:15px;padding:12px}.harness-label{font-size:11px;color:var(--muted);letter-spacing:.09em;text-transform:uppercase;margin-bottom:10px}.harness-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+    .flow-node{position:relative;width:100%;min-height:92px;border:1px solid rgba(255,255,255,.13);background:#0d191e;color:#eef7f4;border-radius:15px;padding:15px;text-align:left;cursor:pointer;transition:.2s transform,.2s border-color,.2s background,.2s box-shadow}.flow-node:hover{transform:translateY(-2px);border-color:rgba(126,231,194,.6)}
+    .flow-node strong{display:block;font-size:14px;margin-bottom:7px}.flow-node small{color:var(--muted);line-height:1.35}.node-state{position:absolute;right:11px;top:11px;width:9px;height:9px;border-radius:50%;background:#506168;box-shadow:0 0 0 4px rgba(80,97,104,.1)}
+    .flow-node.active,.meta-boundary.active{border-color:var(--signal);box-shadow:0 0 0 3px rgba(255,202,128,.08),0 0 28px rgba(255,202,128,.12)}.flow-node.active .node-state,.meta-boundary.active .node-state{background:var(--signal);animation:pulse 1s infinite}
+    .flow-node.done{border-color:rgba(126,231,194,.55);background:rgba(126,231,194,.07)}.flow-node.done .node-state{background:var(--accent)}.flow-node.error{border-color:#ff7d8f}.flow-node.error .node-state{background:#ff7d8f}.flow-node.dim{opacity:.45}
+    @keyframes pulse{50%{transform:scale(1.45);box-shadow:0 0 0 6px rgba(255,202,128,0)}}
+    .result-copy{white-space:pre-wrap;line-height:1.65;color:#dce9e5}.event-list{display:grid;gap:9px;max-height:380px;overflow:auto}.event{display:grid;grid-template-columns:36px 100px 1fr;gap:10px;align-items:start;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:12px}.event-seq{color:var(--accent);font-family:ui-monospace,monospace}.event-type{color:#fff}.event-data{color:var(--muted);font-family:ui-monospace,monospace;overflow-wrap:anywhere}
+    dialog{width:min(860px,calc(100vw - 32px));max-height:84vh;border:1px solid rgba(126,231,194,.3);border-radius:20px;background:#0b151a;color:#eef7f4;padding:0;box-shadow:0 30px 90px rgba(0,0,0,.6)}dialog::backdrop{background:rgba(1,8,11,.8);backdrop-filter:blur(5px)}.modal-head{position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;gap:20px;padding:20px 22px;background:#0b151a;border-bottom:1px solid rgba(255,255,255,.1)}.modal-head h2{margin:0}.modal-head p{margin:6px 0 0;color:var(--muted)}.icon-button{border:1px solid rgba(255,255,255,.15);background:none;color:#fff;border-radius:10px;width:38px;height:38px;cursor:pointer}.modal-body{padding:22px;display:grid;gap:14px}.context-meta{display:flex;gap:8px;flex-wrap:wrap}.context-section{border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:15px;background:rgba(255,255,255,.025)}.context-section h3{font-size:14px;margin:0 0 4px}.context-section .source-meta{margin-bottom:10px}.context-section pre{margin:0;max-height:320px;overflow:auto;white-space:pre-wrap;word-break:break-word;font-size:12px;color:#cce0da}
+    @media(max-width:1050px){.flow{grid-template-columns:1fr;gap:12px}.flow-arrow{width:2px;height:28px;justify-self:center}.flow-arrow::after{right:-4px;top:auto;bottom:-1px;border-left:5px solid transparent;border-right:5px solid transparent;border-top:8px solid rgba(255,255,255,.28);border-bottom:0}.query-card{grid-template-columns:1fr}.meta-boundary{min-height:0}}
+    @media(max-width:650px){.meta-grid,.harness-row{grid-template-columns:1fr}.harness-group{grid-column:auto}.shell{padding-inline:14px}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="/"><span class="brand-mark">A3</span><span>Advanced Harness Engineering</span></a>
+      <nav class="nav" aria-label="Course sections">
+        <a href="http://127.0.0.1:8010">Workflow</a>
+        <a href="http://127.0.0.1:8011">Deep research</a>
+        <a class="active" href="http://127.0.0.1:8012">MetaHarness</a>
+        <a href="http://127.0.0.1:8013">Total Recall</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div>
+        <div class="eyebrow">03 / A harness above harnesses</div>
+        <h1>Watch the outer execution loop make a live decision.</h1>
+        <p class="lede">A meta harness accepts one application request, assembles scoped Oracle incident evidence and operating limits, chooses an eligible inner harness, normalizes its events, and records the outcome. Click any node below to inspect what that part can see.</p>
+      </div>
+      <aside class="status-card">
+        <div class="status-row"><span id="status-dot" class="status-dot"></span><span id="status-title" class="status-title">Connecting…</span></div>
+        <div id="status-detail" class="status-detail">Checking MemoRizz and Oracle AI Database</div>
+      </aside>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><div><h2>Run a real query</h2><p class="kicker">Auto routing is host-owned. You can also select an available harness explicitly.</p></div><span class="badge accent">Oracle only</span></div>
+      <form id="query-form" class="query-card">
+        <div class="field"><label for="query">Question</label><textarea id="query" required maxlength="12000" placeholder="Using the Oracle incident evidence, explain the failure and recommend next actions. Separate facts from inference and cite source IDs."></textarea></div>
+        <div class="field"><label for="harness">Harness</label><select id="harness"><option value="auto">Auto route</option><option value="openai-live">OpenAI live</option><option value="anthropic-live">Anthropic live</option><option value="deepseek-live">DeepSeek live</option></select></div>
+        <button id="run" class="button primary" type="submit">Run live query</button>
+      </form>
+      <div class="live-note">This sends a real provider request and may incur provider charges. No offline path is present in this lesson.</div>
+    </section>
+
+    <section class="card flow-card">
+      <div class="flow-toolbar">
+        <div><h2>Live execution map</h2><p class="kicker">Status travels left to right. Every box is inspectable.</p></div>
+        <div><span id="phase" class="badge">ready</span><div id="execution-id" class="execution-id">no run yet</div></div>
+      </div>
+      <div class="flow" aria-label="Interactive MetaHarness execution diagram">
+        <button class="flow-node" data-node="request"><span class="node-state"></span><strong>User request</strong><small>query · tenant · thread</small></button>
+        <div class="flow-arrow" aria-hidden="true"></div>
+        <div id="meta-boundary" class="meta-boundary">
+          <button class="meta-title" data-node="meta"><span><strong>MemoRizz MetaHarness</strong><small>outer preparation, routing, execution, and recording loop</small></span><span class="node-state"></span></button>
+          <div class="meta-grid">
+            <button class="flow-node" data-node="router"><span class="node-state"></span><strong>HarnessRouter</strong><small>allowlist · readiness · policy · history</small></button>
+            <button class="flow-node" data-node="oracle-context"><span class="node-state"></span><strong>Oracle context</strong><small>scoped retrieval · bounded source IDs</small></button>
+            <div class="harness-group">
+              <div class="harness-label">Inner harnesses</div>
+              <div class="harness-row">
+                <button class="flow-node" data-node="openai-live"><span class="node-state"></span><strong>OpenAI harness</strong><small id="openai-label">checking readiness…</small></button>
+                <button class="flow-node" data-node="anthropic-live"><span class="node-state"></span><strong>Anthropic harness</strong><small id="anthropic-label">checking readiness…</small></button>
+                <button class="flow-node" data-node="deepseek-live"><span class="node-state"></span><strong>DeepSeek harness</strong><small id="deepseek-label">checking readiness…</small></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="flow-arrow" aria-hidden="true"></div>
+        <button class="flow-node" data-node="oracle-evidence"><span class="node-state"></span><strong>Oracle evidence</strong><small>run · events · conversation memory</small></button>
+        <div class="flow-arrow" aria-hidden="true"></div>
+        <button class="flow-node" data-node="response"><span class="node-state"></span><strong>Response</strong><small>selected harness output</small></button>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="card half"><div class="card-head"><div><h2>Response</h2><p class="kicker">Returned only after the run row reaches a terminal state.</p></div></div><div id="response" class="empty">Submit a live query to begin.</div></article>
+      <article class="card half"><div class="card-head"><div><h2>Normalized event stream</h2><p class="kicker">Provider-specific activity expressed in one vocabulary.</p></div></div><div id="events" class="empty">No events yet.</div></article>
+    </section>
+
+    <footer class="footer">MemoRizz from PyPI · Oracle AI Database memory and execution state · credentials remain server-side</footer>
+  </main>
+
+  <dialog id="node-modal">
+    <div class="modal-head"><div><h2 id="modal-title">Node detail</h2><p id="modal-description"></p></div><button id="modal-close" class="icon-button" aria-label="Close">×</button></div>
+    <div id="modal-body" class="modal-body"></div>
+  </dialog>
+  <div id="toast" class="toast"></div>
+  <div id="advanced-inspector"></div>
+  <script src="/shared/inspector.js" defer></script>
+  <script src="/app.js"></script>
+</body>
+</html>
