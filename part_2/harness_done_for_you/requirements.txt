@@ -1,0 +1,22 @@
+# Environment for the two notebooks, the command line runner and the offline tests.
+# Tested with Python 3.12 on macOS (Apple silicon). Lower bounds are the versions in use.
+
+# MemoRizz: the harness, the Anthropic adapter and the file-based memory provider.
+# The MemAgent notebook runs on the 0.12.0 release from PyPI.
+# The meta-harness notebook and the runner need a build that has the pi, Hermes and
+# DeepSeek adapters. They are newer than the 0.12.0 release. See README.md, "MemoRizz build".
+memorizz[anthropic,filesystem]>=0.12.0
+
+# Data: pandas reads Parquet from Hugging Face through PyArrow. huggingface_hub opens the
+# hf:// addresses and downloads one pinned file.
+pandas>=2.2
+pyarrow>=17
+huggingface_hub>=1.0
+
+# Build and execute the notebooks.
+nbformat>=5.10
+nbconvert>=7.16
+ipykernel>=6.29
+
+# Offline tests.
+pytest>=8.0

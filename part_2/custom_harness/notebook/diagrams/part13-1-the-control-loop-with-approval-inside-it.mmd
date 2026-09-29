@@ -1,0 +1,13 @@
+flowchart TB
+    S(["START"]) --> A["assemble_context"]
+    A --> M["call_model"]
+    M -->|tool calls| D["dispatch_tools"]
+    M -->|no tool calls| P["persist"]
+    M -->|step budget spent| F["finalize"]
+    D -->|nothing needs approval| M
+    D -->|something needs approval| R["draft_effects"]
+    R --> H{{"human_review"}}
+    H --> X["apply_effects"]
+    X --> M
+    F --> P
+    P --> E(["END"])

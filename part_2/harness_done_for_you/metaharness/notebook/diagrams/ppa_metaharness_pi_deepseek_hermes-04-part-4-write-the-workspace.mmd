@@ -1,0 +1,9 @@
+flowchart TB
+    D[Mailbox and calendar] --> G[Governed functions]
+    G --> J[governed/*.json<br/>facts only]
+    D --> W[wrap]
+    W --> T[inbox/*.md, history/*.md<br/>external text, delimited]
+    J --> F[Workspace folder]
+    T --> F
+    F --> L[Lock: read-only]
+    L --> H[Baseline hash]

@@ -1,0 +1,8 @@
+# What the notebook needs. Its first cell installs the same packages with %pip.
+memorizz[anthropic,filesystem]>=0.12.0
+pandas>=2.2
+pyarrow>=17
+huggingface_hub>=1.0
+# To open and run it:
+ipykernel>=6.29
+nbconvert>=7.16

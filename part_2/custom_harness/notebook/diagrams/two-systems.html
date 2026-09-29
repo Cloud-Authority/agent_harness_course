@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>System One decides, System Two reasons</title>
+<style>
+  :root { --ink:#17202a; --muted:#55606e; --line:#9aa5b1; --one:#b7791f; --two:#6b46a8; --rule:#2f5d9b; --io:#44546a; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#fff; color:var(--ink);
+         font-family:-apple-system,"Helvetica Neue",Helvetica,Arial,sans-serif; }
+  #diagram { width:1000px; padding:18px 18px 16px; background:#fff; }
+  .flow { display:grid; grid-template-columns: 150px 34px 1fr 34px 170px 34px 1fr 34px 150px; align-items:stretch; }
+  .box { border:1.5px solid var(--c); border-radius:10px; background:#fff; overflow:hidden; display:flex; flex-direction:column; }
+  .box header { background:var(--c); color:#fff; font-size:11.5px; letter-spacing:.07em; text-transform:uppercase;
+                font-weight:650; padding:6px 10px; }
+  .box .in { padding:9px 10px 10px; flex:1; }
+  .box b { display:block; font-size:16px; font-weight:650; line-height:1.2; }
+  .box span { display:block; font-size:12.4px; color:var(--muted); line-height:1.35; margin-top:4px; }
+  .io { --c:var(--io); } .one { --c:var(--one); background:#fffaf1; } .two { --c:var(--two); background:#f8f5fd; }
+  .rule { --c:var(--rule); background:#f3f8ff; }
+  .hop { display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--io); }
+  .hop svg { display:block; }
+  .facts { display:grid; grid-template-columns: 150px 34px 1fr 34px 170px 34px 1fr 34px 150px; margin-top:9px; }
+  .facts div { font-size:12px; color:var(--muted); line-height:1.4; padding:0 4px; text-align:center; }
+  .facts b { color:var(--ink); font-weight:650; }
+</style>
+</head>
+<body>
+<div id="diagram">
+  <div class="flow">
+    <div class="box io"><header>Input</header><div class="in"><b>A request, an email, or candidates</b><span>Often written by a stranger</span></div></div>
+    <div class="hop"><svg width="30" height="18" viewBox="0 0 30 18"><path d="M1 9h20" stroke="#44546a" stroke-width="2"/><path d="M19 2l10 7-10 7z" fill="#44546a"/></svg></div>
+    <div class="box one"><header>System One decides</header><div class="in"><b>Jev</b><span>Answers a closed question with a probability for each answer</span></div></div>
+    <div class="hop"><svg width="30" height="18" viewBox="0 0 30 18"><path d="M1 9h20" stroke="#44546a" stroke-width="2"/><path d="M19 2l10 7-10 7z" fill="#44546a"/></svg></div>
+    <div class="box rule"><header>Harness rule</header><div class="in"><b>Code you can read</b><span>A threshold, a limit, an allowlist</span></div></div>
+    <div class="hop"><svg width="30" height="18" viewBox="0 0 30 18"><path d="M1 9h20" stroke="#44546a" stroke-width="2"/><path d="M19 2l10 7-10 7z" fill="#44546a"/></svg></div>
+    <div class="box two"><header>System Two reasons</header><div class="in"><b>Claude</b><span>Reads the admitted context, uses the bound tools, plans and writes</span></div></div>
+    <div class="hop"><svg width="30" height="18" viewBox="0 0 30 18"><path d="M1 9h20" stroke="#44546a" stroke-width="2"/><path d="M19 2l10 7-10 7z" fill="#44546a"/></svg></div>
+    <div class="box io"><header>Output</header><div class="in"><b>A plan, tool calls, an answer</b><span>Effects still stop at the approval gate</span></div></div>
+  </div>
+  <div class="facts">
+    <div></div><div></div>
+    <div><b>About 0.3 s.</b> Returns numbers. Takes no action.</div><div></div>
+    <div>Turns a number into a decision.</div><div></div>
+    <div><b>Seconds to a minute.</b> Returns text and tool calls.</div><div></div>
+    <div></div>
+  </div>
+</div>
+</body>
+</html>

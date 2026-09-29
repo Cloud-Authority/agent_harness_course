@@ -1,0 +1,11 @@
+flowchart TD
+    R[Request] --> K{System One available?}
+    K -->|yes| C[choice: which procedure, or none]
+    K -->|yes| N[noul: is each tool needed?]
+    K -->|no| V[Vector search, one sentence at a time]
+    C --> P[Tools named in the chosen procedure]
+    N --> T[Tools above the threshold]
+    P --> B[Bound for this turn]
+    T --> B
+    V --> B
+    A[Always bound: load_skill, remember_fact, scratch_note] --> B

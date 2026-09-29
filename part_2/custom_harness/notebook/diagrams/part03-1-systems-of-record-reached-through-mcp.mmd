@@ -1,0 +1,8 @@
+flowchart LR
+    H[Harness] -->|MCP over HTTP| M[mail server]
+    H -->|MCP over HTTP| C[calendar server]
+    H -->|MCP over HTTP| N[notes server]
+    M --> D1[(mailbox)]
+    C --> D2[(events)]
+    N --> D3[(pages)]
+    H -. never bound .-> X[trash, delete, share]

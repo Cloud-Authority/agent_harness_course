@@ -1,0 +1,11 @@
+flowchart TB
+    subgraph Schedules
+        C[Cron job<br/>weekdays 08:00] --> Q
+        O[One-shot job<br/>focus session ends] --> Q
+    end
+    subgraph Events
+        M[Meeting within 30 minutes] --> Q
+        V[Mail from a VIP] --> N[One-line alert]
+    end
+    Q[Same entry point as a typed request] --> A[Agent run]
+    A --> L[Conversation memory and ledger]

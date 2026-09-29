@@ -1,0 +1,23 @@
+sequenceDiagram
+    autonumber
+    actor O as Owner
+    participant H as Control loop
+    participant S1 as System One
+    participant DB as Oracle AI Database
+    participant S2 as Claude
+    participant M as MCP servers
+    O->>H: Time-block my top three tasks
+    H->>S1: Which procedure? Which tools?
+    S1-->>H: A probability for each
+    H->>DB: Memory, governed meanings
+    DB-->>H: Context for this turn
+    H->>S2: Context and the chosen tools
+    S2-->>H: Call plan_day, then create three events
+    H->>M: Read the calendar
+    M-->>H: Events, marked as external data
+    H->>DB: Write the audit rows, save a checkpoint
+    H-->>O: Approve these three events?
+    O->>H: Approved
+    H->>M: Create the events
+    H->>DB: Record the outcome and the episode
+    H-->>O: Your afternoon is blocked

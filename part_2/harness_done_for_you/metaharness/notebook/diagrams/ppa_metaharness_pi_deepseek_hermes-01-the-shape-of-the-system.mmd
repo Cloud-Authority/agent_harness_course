@@ -1,0 +1,20 @@
+flowchart TB
+    subgraph Host[Host code: this notebook]
+        W[Real mailbox and calendar] --> X[Workspace export<br/>read-only folder]
+        G[Governed definitions] --> X
+    end
+    subgraph Meta[MemoRizz MetaHarness]
+        M[(One memory)] --> C[Context pack]
+        T[Task envelope<br/>permissions and budget] --> R{Router}
+        C --> R
+    end
+    X --> R
+    R --> P[pi]
+    R --> H[Hermes]
+    R --> D[DeepSeek<br/>Claude Code loop]
+    N[Native MemAgent] --> M
+    P --> E[Normalised events and usage]
+    H --> E
+    D --> E
+    E --> L[(Run ledger)]
+    E --> M

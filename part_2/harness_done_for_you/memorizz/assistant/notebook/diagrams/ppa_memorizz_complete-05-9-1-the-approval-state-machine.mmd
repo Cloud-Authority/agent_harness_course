@@ -1,0 +1,9 @@
+stateDiagram-v2
+    [*] --> Pending: model calls a gated tool
+    Pending --> Approved: owner approves
+    Pending --> Rejected: owner declines
+    Pending --> Expired: nobody decides in time
+    Approved --> Consumed: host resumes, the stored call runs once
+    Consumed --> [*]
+    Rejected --> [*]
+    Expired --> [*]

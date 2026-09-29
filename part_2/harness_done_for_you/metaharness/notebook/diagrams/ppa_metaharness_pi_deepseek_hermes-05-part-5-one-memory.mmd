@@ -1,0 +1,11 @@
+flowchart TB
+    O[Owner states a preference] --> N[Native MemAgent]
+    N -->|remember_preference| K[(Knowledge base)]
+    K --> C[Context pack<br/>built for each run]
+    V[(Conversation memory)] --> C
+    C --> P[pi]
+    C --> H[Hermes]
+    C --> D[DeepSeek]
+    P -->|answer| V
+    H -->|answer| V
+    D -->|answer| V

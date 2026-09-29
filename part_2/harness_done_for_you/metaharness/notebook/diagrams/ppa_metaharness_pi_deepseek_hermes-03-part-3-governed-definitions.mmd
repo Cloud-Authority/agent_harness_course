@@ -1,0 +1,6 @@
+flowchart TB
+    D[Real data] --> G[Governed definitions<br/>plain functions]
+    G --> T[Trusted tools]
+    T --> M[Model]
+    M -->|chooses what to do| A[Answer or proposed action]
+    G -.->|decide what is true| A

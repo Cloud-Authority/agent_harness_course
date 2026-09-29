@@ -1,0 +1,5 @@
+stateDiagram-v2
+    [*] --> ACTIVE: first request of the day
+    ACTIVE --> ACTIVE: capture, plan, brief
+    ACTIVE --> ENDED: end-of-day wrap
+    ENDED --> [*]: selected notes promoted to memory

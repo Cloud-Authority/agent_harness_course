@@ -1,0 +1,9 @@
+stateDiagram-v2
+    [*] --> Refused: the repository has uncommitted changes
+    [*] --> Pending: the worktree is clean, or the host accepts the changes
+    Pending --> Approved: host approves
+    Pending --> Canceled: host declines
+    Approved --> Running: host resumes, the harness starts
+    Running --> [*]
+    Canceled --> [*]
+    Refused --> [*]

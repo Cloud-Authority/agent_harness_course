@@ -6,8 +6,17 @@ It turns the workshop's memory-first architecture into runnable code, narrated
 notebooks, interactive appbooks, staged exercises, and a production-oriented
 deployment path.
 
-The example system is **ERPA**, a fictional retail-planning assistant built twice
-against the same synthetic Kata dataset:
+The course has two parts, and each builds one assistant.
+
+| Part | Assistant | What the harness has to handle |
+|---|---|---|
+| [Part 1](part_1/) | **ERPA**, a retail-planning assistant | Curated evidence in one database. Nothing it does reaches another person |
+| [Part 2](part_2/) | **PPA**, a personal productivity assistant | Mail written by strangers, a calendar, timers that outlive a request, and actions taken in your name |
+
+## Part 1: ERPA
+
+ERPA is a fictional retail-planning assistant built twice against the same
+synthetic Kata dataset:
 
 | Path | Approach | Best for |
 |---|---|---|
@@ -19,7 +28,7 @@ Both paths demonstrate working, episodic, semantic, and procedural memory; trust
 tools and progressive capability disclosure; sandboxed execution; semantic caching;
 and observable `recall -> decide -> write` traces.
 
-## Quick start
+### Part 1 quick start
 
 Local workshop mode is deterministic, credential-free, and uses generated synthetic
 data. It requires Python 3.11 or newer.
@@ -59,7 +68,64 @@ fair-evaluation capstone. Install its published PyPI dependencies and begin with
 .venv/bin/python -m pytest -q part_1/advanced/tests
 ```
 
+## Part 2: PPA
+
+PPA reads email, plans against a calendar, keeps time while you work and can
+send messages for you, so its harness needs what ERPA's did not: screening of
+untrusted mail, approval gates inside the agent loop, a runtime for timers and
+schedules, and a second model that decides beside the model that reasons.
+
+| Path | Approach | Best for |
+|---|---|---|
+| [Custom harness notebook](part_2/custom_harness/notebook/) | The harness built from first principles on Oracle AI Database 26ai, Oracle Agent Memory, LangGraph, Claude and a System One model | Reading and running every line |
+| [Custom harness appbook](part_2/custom_harness/appbook/) | The same assistant as a running application, with fourteen chapters and a data explorer | Using the assistant, then opening up its parts |
+| [Harness done for you](part_2/harness_done_for_you/) | The same jobs on MemoRizz, pi, Hermes and DeepSeek | Seeing what a packaged harness decides for you |
+
+Every lesson runs on a practice workspace built from public data: one mailbox
+from [`corbt/enron-emails`](https://huggingface.co/datasets/corbt/enron-emails),
+real prompt injections from
+[`microsoft/llmail-inject-challenge`](https://huggingface.co/datasets/microsoft/llmail-inject-challenge),
+and a calendar derived from that mailbox. No lesson needs a Google, Microsoft
+or Notion account.
+
+### Part 2 quick start
+
+The appbook runs with no keys. It then answers from a scripted responder and
+nothing leaves the machine.
+
+```bash
+python -m venv part_2/custom_harness/.venv
+part_2/custom_harness/.venv/bin/python -m pip install \
+  -r part_2/custom_harness/appbook/requirements.txt
+cd part_2/custom_harness/appbook
+./run.sh                        # http://127.0.0.1:8020
+```
+
+| To get | Set |
+|---|---|
+| Answers from Claude | `ANTHROPIC_API_KEY` |
+| System One: attack screening and choice of evidence | `TYPESAFE_API_KEY` |
+| State kept in Oracle AI Database | Nothing. The appbook uses the database when it is running, and a local store when it is not |
+
+The notebook needs Docker, `ANTHROPIC_API_KEY` and `ORACLE_ADMIN_PASSWORD`. It
+starts the database, builds the practice workspace and runs a working day end
+to end. Its sections are numbered by part for the outline, and the sections
+marked with a star are the ones to show live.
+
+```bash
+cd part_2/custom_harness/notebook
+python -m pip install -r requirements.txt
+jupyter lab ppa_custom_complete.ipynb
+```
+
+Begin with the [Part 2 guide](part_2/README.md).
+
 ## Repository guide
+
+- [`part_2/README.md`](part_2/README.md) explains the three Part 2 tracks, the
+  practice workspace, the two models and the keys.
+- [`part_2/_shared/`](part_2/_shared/) holds the practice data, the rules that
+  derive a working week from it, the connectors and the MCP gateway.
 
 - [`part_1/README.md`](part_1/README.md) explains participant setup, the two builds,
   and the workshop architecture.
@@ -97,7 +163,13 @@ See the [deployment guide](part_1/custom_harness/deploy/README.md) for details.
 
 ## Safety and scope
 
-All customer and commercial records are synthetic. The local sandbox exposes only
+In Part 1, all customer and commercial records are synthetic. The local sandbox exposes only
 fixed workshop operations: it cannot execute arbitrary shell commands or make
 unrestricted network requests. The examples do not execute payments, mutate the
 historical business dataset, or autonomously approve commercial decisions.
+
+In Part 2, the practice mailbox is public data and its people are real, so the
+course keeps to business mail. Messages sent in the practice workspace reach
+nobody. With your own accounts connected, safe mode is on by default: an
+approved message to anyone but you is held as a draft. Text the assistant reads
+is sent to the model providers you give keys for, and to nobody else.

@@ -1,0 +1,25 @@
+sequenceDiagram
+    participant Host as Notebook
+    participant Meta as MetaHarness
+    participant Memory as Memory provider
+    participant Store as Run ledger
+    participant Harness as pi, Hermes or Claude Code
+
+    Host->>Meta: run(task envelope)
+    Meta->>Meta: resolve workspace, check allowed roots
+    Meta->>Meta: route: is the harness ready and permitted?
+    alt needs approval (writes, network, secrets)
+        Meta->>Store: store proposal, status pending_approval
+        Meta-->>Host: paused
+    else read-only
+        Meta->>Memory: retrieve scoped memory
+        Memory-->>Meta: context pack with source IDs
+        Meta->>Harness: start subprocess with prompt and limits
+        loop until done or a limit is reached
+            Harness-->>Meta: events (tool call, message, usage)
+            Meta->>Store: append normalised event
+        end
+        Meta->>Memory: save the answer as a conversation turn
+        Meta->>Store: save result and status
+        Meta-->>Host: result with usage, cost and latency
+    end

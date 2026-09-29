@@ -1,0 +1,11 @@
+sequenceDiagram
+    participant G as assemble_context
+    participant S1 as System One
+    participant DB as Oracle
+    participant S2 as Claude
+    G->>S1: which procedure, which tools?
+    S1-->>G: probabilities
+    G->>DB: memory, governed meanings
+    DB-->>G: context
+    G->>S2: constant system prompt, chosen tools, one context message
+    S2-->>G: reasoning and tool calls

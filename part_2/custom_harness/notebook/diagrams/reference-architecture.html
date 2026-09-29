@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PPA reference architecture</title>
+<style>
+  :root {
+    --ink: #17202a; --muted: #55606e; --line: #9aa5b1; --paper: #ffffff;
+    --people: #44546a; --loop: #2f5d9b; --one: #b7791f; --two: #6b46a8;
+    --db: #b03a2e; --mcp: #1e7b52; --world: #5d6d7e; --extra: #7b8794;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink);
+         font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif; }
+  #diagram { width: 1240px; padding: 22px 24px 20px; background: var(--paper); }
+  h1 { font-size: 21px; margin: 0 0 3px; font-weight: 650; }
+  .sub { font-size: 13.5px; color: var(--muted); margin: 0 0 14px; }
+  .lane { border: 1.5px solid var(--line); border-radius: 12px; background: #fbfcfd; overflow: hidden; }
+  .lane > header { display: flex; align-items: baseline; gap: 10px; padding: 7px 14px;
+                   color: #fff; font-size: 12.5px; letter-spacing: .07em; text-transform: uppercase; font-weight: 650; }
+  .lane > header small { font-size: 12px; letter-spacing: 0; text-transform: none; font-weight: 400; opacity: .92; }
+  .lane .body { padding: 11px 12px 12px; display: grid; gap: 9px; }
+  .people > header { background: var(--people); } .loop > header { background: var(--loop); }
+  .models > header { background: var(--one); } .db > header { background: var(--db); }
+  .mcp > header { background: var(--mcp); } .world > header { background: var(--world); }
+  .extra > header { background: var(--extra); }
+  .card { background: #fff; border: 1px solid #c9d1da; border-left: 4px solid var(--accent, var(--line));
+          border-radius: 7px; padding: 7px 10px 8px; position: relative; min-height: 58px; }
+  .card b { display: block; font-size: 14px; font-weight: 650; padding-right: 62px; line-height: 1.25; }
+  .card span { display: block; font-size: 12.2px; color: var(--muted); line-height: 1.35; margin-top: 2px; }
+  .card code { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 11.3px; color: #2c3e50; }
+  .part { position: absolute; top: 7px; right: 8px; font-size: 10.5px; font-weight: 650; color: #fff; font-style: normal;
+          background: var(--accent, var(--line)); border-radius: 9px; padding: 1.5px 7px; white-space: nowrap; }
+  .people .card { --accent: var(--people); } .models .card.one { --accent: var(--one); }
+  .models .card.two { --accent: var(--two); } .models .card.emb { --accent: var(--db); }
+  .db .card { --accent: var(--db); } .mcp .card { --accent: var(--mcp); }
+  .world .card { --accent: var(--world); } .extra .card { --accent: var(--extra); }
+  .cols-4 { grid-template-columns: repeat(4, 1fr); } .cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .flow { display: flex; align-items: stretch; gap: 0; padding: 12px 12px 6px; }
+  .node { flex: 1; background: #fff; border: 1.5px solid var(--loop); border-radius: 8px; padding: 7px 6px 8px;
+          text-align: center; min-width: 0; }
+  .node code { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 12.2px; font-weight: 650; color: #1b3a63; }
+  .node span { display: block; font-size: 11.4px; color: var(--muted); line-height: 1.3; margin-top: 3px; }
+  .node.gate { border-color: var(--one); background: #fff8ec; border-width: 2px; }
+  .node.gate code { color: #7a4e0c; }
+  .hop { flex: 0 0 22px; display: flex; align-items: center; justify-content: center; color: var(--loop); font-size: 17px; }
+  .note { font-size: 12px; color: var(--muted); padding: 0 14px 10px; }
+  .note b { color: var(--ink); font-weight: 650; }
+  .link { height: 40px; display: grid; align-items: center; }
+  .link.three { grid-template-columns: 250px 1fr 270px; column-gap: 14px; }
+  .link > div { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 12px; color: var(--muted); }
+  .link svg { display: block; }
+  .row { display: grid; grid-template-columns: 250px 1fr 270px; column-gap: 14px; align-items: start; }
+  .stack { display: grid; gap: 0; }
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-top: 12px; }
+  .legend i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+  .legend .badge { font-size: 10.5px; font-weight: 650; color: #fff; background: var(--muted); border-radius: 9px; padding: 1.5px 7px; margin-right: 5px; }
+</style>
+</head>
+<body>
+<div id="diagram">
+  <h1>PPA reference architecture</h1>
+  <p class="sub">A personal productivity assistant on a custom agent harness. Every box is a component this notebook builds or uses. The badge names the part that builds it.</p>
+
+  <section class="lane people">
+    <header>People and time <small>what starts a turn</small></header>
+    <div class="body cols-4">
+      <div class="card"><b>Owner</b><span>Types a request, approves or declines an action</span><em class="part">Part 16</em></div>
+      <div class="card"><b>Scheduled routines</b><span>Morning brief, end-of-day wrap, weekly review</span><em class="part">Part 17</em></div>
+      <div class="card"><b>Event triggers</b><span>A meeting in 30 minutes, mail from a VIP</span><em class="part">Part 17</em></div>
+      <div class="card"><b>Focus timers</b><span>A Pomodoro that ends on its own</span><em class="part">Part 9</em></div>
+    </div>
+  </section>
+
+  <div class="link"><div>
+    <svg width="18" height="34" viewBox="0 0 18 34"><path d="M9 1v26" stroke="#44546a" stroke-width="2" fill="none"/><path d="M2 22l7 10 7-10z" fill="#44546a"/></svg>
+    every request, typed or scheduled, enters through <b style="color:#17202a;font-weight:650">&nbsp;run_agent</b>
+  </div></div>
+
+  <section class="lane loop">
+    <header>Control loop <small>LangGraph StateGraph, checkpointed in Oracle after every step</small><small style="margin-left:auto">Part 13</small></header>
+    <div class="flow">
+      <div class="node"><code>assemble_context</code><span>once per turn</span></div><div class="hop">&#9654;</div>
+      <div class="node"><code>call_model</code><span>append only</span></div><div class="hop">&#9654;</div>
+      <div class="node"><code>dispatch_tools</code><span>runs what is free</span></div><div class="hop">&#9654;</div>
+      <div class="node"><code>draft_effects</code><span>audit row first</span></div><div class="hop">&#9654;</div>
+      <div class="node gate"><code>human_review</code><span>pauses for the owner</span></div><div class="hop">&#9654;</div>
+      <div class="node"><code>apply_effects</code><span>approved or declined</span></div><div class="hop">&#9654;</div>
+      <div class="node"><code>persist</code><span>stores the episode</span></div>
+    </div>
+    <p class="note"><b>Loop:</b> tool results and owner decisions return to <b>call_model</b> until the model has no more tool calls. Reading is free. Anything another person will see stops at <b>human_review</b>.</p>
+  </section>
+
+  <div class="link three">
+    <div><svg width="18" height="36" viewBox="0 0 18 36"><path d="M9 8v20" stroke="#44546a" stroke-width="2"/><path d="M2 11l7-10 7 10z" fill="#44546a"/><path d="M2 25l7 10 7-10z" fill="#44546a"/></svg>decide, reason</div>
+    <div><svg width="18" height="36" viewBox="0 0 18 36"><path d="M9 8v20" stroke="#44546a" stroke-width="2"/><path d="M2 11l7-10 7 10z" fill="#44546a"/><path d="M2 25l7 10 7-10z" fill="#44546a"/></svg>state, meaning, memory, time and evidence</div>
+    <div><svg width="18" height="36" viewBox="0 0 18 36"><path d="M9 8v20" stroke="#44546a" stroke-width="2"/><path d="M2 11l7-10 7 10z" fill="#44546a"/><path d="M2 25l7 10 7-10z" fill="#44546a"/></svg>tool calls</div>
+  </div>
+
+  <div class="row">
+    <section class="lane models">
+      <header>Models</header>
+      <div class="body">
+        <div class="card one"><b>System One</b><span>Jev 1.13. Decides: attack or not, which procedure, which tools, which evidence</span><em class="part">Part 10</em></div>
+        <div class="card two"><b>System Two</b><span>Claude Opus 5.5, adaptive thinking. Reasons, plans and writes</span><em class="part">Part 12</em></div>
+        <div class="card emb"><b>Embeddings</b><span><code>ALL_MINILM_L12_V2</code>, an ONNX model that runs inside the database</span><em class="part">Part 1</em></div>
+      </div>
+    </section>
+
+    <section class="lane db">
+      <header>Oracle AI Database 26ai <small>what the harness owns and keeps</small></header>
+      <div class="body cols-2">
+        <div class="card"><b>State of record</b><span><code>PPA_TASKS</code> <code>PPA_FOCUS_SESSIONS</code> <code>PPA_CONTACTS</code> <code>PPA_SETTINGS</code></span><em class="part">Part 4</em></div>
+        <div class="card"><b>Governed meaning</b><span>Views for <i>urgent</i>, <i>today</i>, <i>slipping</i>, <i>stale</i>. <code>PPA_SEMANTIC_CATALOG</code></span><em class="part">Part 5</em></div>
+        <div class="card"><b>Working memory</b><span>ScratchFS on SecureFile BLOBs. The workday's captures and plans</span><em class="part">Part 6</em></div>
+        <div class="card"><b>Long-term and episodic memory</b><span>Oracle Agent Memory 26.8. Preferences, people, what happened</span><em class="part">Part 7</em></div>
+        <div class="card"><b>Skills and tools</b><span><code>PPA_SKILL_REGISTRY</code> <code>PPA_TOOL_REGISTRY</code>, disclosed on demand</span><em class="part">Parts 8, 11</em></div>
+        <div class="card"><b>Time</b><span><code>DBMS_SCHEDULER</code> <code>PPA_AUTOMATION_QUEUE</code> <code>PPA_NOTIFICATIONS</code></span><em class="part">Parts 9, 17</em></div>
+        <div class="card"><b>Durable checkpoints</b><span><code>OracleSaver</code>. A paused run survives a restart</span><em class="part">Part 13</em></div>
+        <div class="card"><b>Evidence</b><span><code>PPA_ACTION_AUDIT</code> <code>PPA_DECISION_LOG</code></span><em class="part">Parts 10, 19</em></div>
+      </div>
+    </section>
+
+    <div class="stack">
+      <section class="lane mcp">
+        <header>Connectors <small>MCP</small></header>
+        <div class="body">
+          <div class="card"><b>Mail, calendar, notes</b><span>Three MCP servers over streamable HTTP</span><em class="part">Part 3</em></div>
+          <div class="card"><b>Allowlist and tiers</b><span>Read, automatic write, approval, never exposed</span><em class="part">Parts 3, 11</em></div>
+        </div>
+      </section>
+      <div class="link" style="height:34px"><div><svg width="18" height="32" viewBox="0 0 18 36"><path d="M9 8v20" stroke="#44546a" stroke-width="2"/><path d="M2 11l7-10 7 10z" fill="#44546a"/><path d="M2 25l7 10 7-10z" fill="#44546a"/></svg>read on demand</div></div>
+      <section class="lane world">
+        <header>Systems of record</header>
+        <div class="body">
+          <div class="card"><b>Practice workspace</b><span>Real mail, real attacks, and a generated calendar layer</span><em class="part">Part 2</em></div>
+          <div class="card"><b>Your own accounts</b><span>Optional, and only in the appbook</span></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div style="height:14px"></div>
+  <section class="lane extra">
+    <header>Optional services <small>each one is switched on by a key and off by its absence</small></header>
+    <div class="body cols-3">
+      <div class="card"><b>Tavily</b><span>Web search. Results are treated as untrusted</span><em class="part">Part 11</em></div>
+      <div class="card"><b>E2B</b><span>A sandbox for generated code. No host fallback</span><em class="part">Part 18</em></div>
+      <div class="card"><b>LangSmith</b><span>Traces of every step</span><em class="part">Part 19</em></div>
+    </div>
+  </section>
+
+  <div class="legend">
+    <span><i style="background:#2f5d9b"></i>control loop</span>
+    <span><i style="background:#b7791f"></i>System One decides</span>
+    <span><i style="background:#6b46a8"></i>System Two reasons</span>
+    <span><i style="background:#b03a2e"></i>inside the database</span>
+    <span><i style="background:#1e7b52"></i>connectors</span>
+    <span><span class="badge">Part N</span>where the component is built</span>
+  </div>
+</div>
+</body>
+</html>

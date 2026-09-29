@@ -1,0 +1,22 @@
+# Local environments and tools installed for this track
+.venv/
+.tools/
+
+# Generated state: memory provider files, MemoRizz home, run ledger, scratch homes
+data/
+ppa_data/
+
+# The workspace a notebook or the export script writes for the file-reading harnesses
+workspace/
+ppa_workspace/
+
+# Python and notebooks
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Secrets
+.env
+.env.*
+!.env.example
