@@ -1,0 +1,19 @@
+sequenceDiagram
+    participant Host as Owner, through host code
+    participant Agent as MemoRizz MemAgent
+    participant Memory as Memory provider
+    participant Skills as Skillbox
+    participant Tools as Trusted tools
+    participant Model as Claude
+
+    Host->>Agent: run("Prepare my morning brief.", memory, thread, user)
+    Agent->>Memory: recall conversation and durable facts
+    Agent->>Skills: retrieve the matching procedure
+    Agent->>Model: instruction + memory + skill + request
+    Model-->>Agent: call inbox_triage, calendar_day, tasks_overview
+    Agent->>Tools: run the three tools
+    Tools-->>Agent: governed results, external text delimited
+    Agent->>Model: tool results
+    Model-->>Agent: the brief
+    Agent->>Memory: store the turn
+    Agent-->>Host: answer

@@ -1,0 +1,13 @@
+sequenceDiagram
+    participant O as Owner
+    participant H as Harness
+    participant DB as Oracle
+    participant J as Scheduler job
+    participant W as Notification worker
+    O->>H: start a Pomodoro on task T
+    H->>DB: INSERT focus session (RUNNING)
+    H->>DB: CREATE one-shot job at the end time
+    Note over J: 25 minutes pass. Nothing else is running.
+    J->>DB: mark COMPLETED, INSERT notification
+    W->>DB: read pending notifications
+    W->>O: Session finished. You captured 2 distractions.

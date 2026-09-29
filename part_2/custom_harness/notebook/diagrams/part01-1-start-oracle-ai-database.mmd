@@ -1,0 +1,6 @@
+flowchart TD
+    A{Does SYS log in?} -->|yes| R((Ready))
+    A -->|no| B{Does the container exist?}
+    B -->|yes| S[docker start] --> W[Wait for a real login]
+    B -->|no| C[docker run] --> W
+    W --> R

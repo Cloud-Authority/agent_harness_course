@@ -1,0 +1,14 @@
+sequenceDiagram
+    participant H as Harness
+    participant S as Session row
+    participant T as Trigger
+    participant Q as Promotion queue
+    participant W as Python worker
+    participant M as Oracle Agent Memory
+    H->>S: UPDATE status = ENDED
+    S->>T: AFTER UPDATE OF status
+    T->>Q: chunk files marked promote_on_end
+    Note over T,Q: same transaction
+    W->>Q: read unconsumed chunks
+    W->>M: remember, unless already known
+    W->>Q: mark consumed

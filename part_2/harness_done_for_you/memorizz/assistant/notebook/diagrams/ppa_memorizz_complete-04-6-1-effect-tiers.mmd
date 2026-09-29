@@ -1,0 +1,12 @@
+flowchart TB
+    C[Tool call from the model] --> Q{Tier}
+    Q -->|Read| R[Run. Nothing changes.]
+    Q -->|Automatic write| W[Run. Only the owner sees it:<br/>task, draft, focus session, memory]
+    Q -->|Approval| P[Pause. Store the exact call.]
+    P --> O{Owner decides}
+    O -->|Approve| X[Run exactly the stored call, once]
+    O -->|Decline| N[Never runs]
+    R --> L[Action log]
+    W --> L
+    X --> L
+    N --> L

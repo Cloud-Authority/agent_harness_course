@@ -1,0 +1,6 @@
+flowchart LR
+    S["Scheduler<br/>job"] --> Q[("Automation<br/>queue")]
+    T["Trigger<br/>check"] --> Q
+    Q --> W["Worker calls<br/>run_agent"]
+    W --> N[("Notifications")]
+    N --> O["Owner"]

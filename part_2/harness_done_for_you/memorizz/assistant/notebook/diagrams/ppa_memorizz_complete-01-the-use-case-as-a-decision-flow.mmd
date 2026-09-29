@@ -1,0 +1,18 @@
+flowchart TB
+    U[Owner asks PPA] --> I{What kind of request?}
+    I -->|Brief| B[Read inbox, calendar, tasks]
+    I -->|Triage| T[Apply governed triage]
+    I -->|Plan time| P[Find free slots, size blocks]
+    I -->|Focus| F[Start a timed session]
+    B --> M[Recall what the owner said before]
+    T --> M
+    P --> M
+    F --> M
+    M --> D{Does another person see the result?}
+    D -->|No: task, draft, note| A[Do it and log it]
+    D -->|Yes: send, invite, respond| H[Pause for the owner's approval]
+    H -->|Approved| E[Execute exactly the stored call]
+    H -->|Declined| R[Tell the model, which adapts]
+    A --> L[Action log]
+    E --> L
+    R --> L

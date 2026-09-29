@@ -1,0 +1,12 @@
+flowchart TB
+    Q[Owner's words] --> S[Vector search over the catalogue]
+    subgraph Build
+      V[Views] --> C
+      K[Column comments] --> C
+      H[Curated hints] --> C
+      C[Scanner] --> E[VECTOR_EMBEDDING] --> CAT[(PPA_SEMANTIC_CATALOG)]
+    end
+    CAT --> S --> CTX[Context for the model]
+    CTX --> M[Claude picks a trusted tool]
+    M --> T[Tool reads a governed view]
+    T --> A[Answer grounded in rows]

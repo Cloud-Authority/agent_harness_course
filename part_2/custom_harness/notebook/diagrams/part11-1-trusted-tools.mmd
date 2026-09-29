@@ -1,0 +1,11 @@
+flowchart TB
+    M["Claude"] -->|tool call| C{"Allowlisted?"}
+    C -->|no| X["Reject"]
+    C -->|yes| T{"Tier"}
+    T -->|approval| G["Approval gate,<br/>Part 13"]
+    T -->|automatic| F["Trusted function"]
+    F --> MCP["MCP servers"]
+    F --> DB[("Oracle")]
+    F --> S1["System One:<br/>screen and rerank"]
+    MCP --> W["Wrap external text"]
+    W -->|tool result| M

@@ -1,0 +1,5 @@
+flowchart LR
+    R["Retrieve widely,<br/>by keyword or vector"] -->|ten candidates| S1["System One,<br/>one choice question"]
+    S1 --> K["The useful few,<br/>best first"]
+    S1 --> N["Or none<br/>at all"]
+    K --> M["Claude reads<br/>three, not ten"]

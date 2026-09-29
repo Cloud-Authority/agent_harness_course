@@ -1,0 +1,8 @@
+flowchart LR
+    Q["Request"] --> S["Search the<br/>registries"]
+    S --> MAN["Short skill<br/>manifests"]
+    S --> TS["A few tool<br/>schemas"]
+    MAN -->|shown| M["Claude"]
+    TS -->|bound| M
+    M -->|load_skill| BODY["One full<br/>procedure"]
+    BODY --> M

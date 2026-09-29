@@ -1,0 +1,9 @@
+flowchart TB
+    S[Owner states a rule<br/>turn 4, session 1] --> T[remember_preference]
+    T --> G{Tripwire}
+    G -->|clean| K[(Knowledge base<br/>long-term)]
+    G -->|instruction-like| X[Refused]
+    S --> C[(Conversation memory<br/>episodic)]
+    K --> R[Recall for a new request<br/>turn 5, session 2]
+    C --> R
+    R --> P[Added to the prompt<br/>with its source]
