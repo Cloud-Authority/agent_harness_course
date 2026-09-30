@@ -1,0 +1,5 @@
+flowchart LR
+  Q[query] --> T[Tavily search] --> R[numbered results]
+  R --> E[(TRIP_EVIDENCE)]
+  R --> C[Claude · offers schema] --> O[offers, each naming a result]
+  O --> F[(TRIP_OFFERS)]

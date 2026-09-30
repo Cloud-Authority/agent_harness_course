@@ -1,0 +1,25 @@
+sequenceDiagram
+  participant P as Person
+  participant G as Graph
+  participant C as Claude
+  participant W as Web (Tavily)
+  participant O as Oracle AI Database
+  P->>G: "agent harness engineering"
+  G->>C: scope: questions, criteria, outline with queries
+  G-->>P: outline to approve (interrupt)
+  P->>G: approve
+  par one gather per section
+    G->>W: search scholarly venues, read the best pages
+    G->>O: store each page with an embedding
+  end
+  G->>C: read sources into typed notes (batches, in parallel)
+  G->>C: organise: framework, comparison table, open questions
+  par one write per section
+    G->>O: evidence pack: own sources + nearest by meaning
+    G->>C: write the section, citing only [S-id]s it was given
+  end
+  G->>C: referee pass
+  G->>G: harness rules: words, citations, every citation resolves
+  G->>C: abstract
+  G-->>P: paper to approve (interrupt)
+  P->>G: approve → files written

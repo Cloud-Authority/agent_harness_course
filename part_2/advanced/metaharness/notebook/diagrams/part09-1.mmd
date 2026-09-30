@@ -1,0 +1,5 @@
+flowchart LR
+  T[task + memory] --> P[Plan · pi<br/>read-only]
+  P -->|handoff| I[Implement · Codex<br/>direct edit · approval · pytest]
+  I -->|handoff| R[Review · Claude Code<br/>read-only]
+  P & I & R --> O[(runs · events · approvals · conversation memory)]

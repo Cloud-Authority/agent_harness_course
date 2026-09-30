@@ -1,0 +1,14 @@
+flowchart TB
+  P[Person] -->|subject| H[Survey harness · LangGraph]
+  H --> C[Claude Opus 5.5<br/>typed answers only]
+  H --> T[Tavily search and extract]
+  T --> S[(SURVEY_SOURCES<br/>page text + VECTOR embedding)]
+  S --> N[(SURVEY_NOTES<br/>typed reading)]
+  N --> X[(taxonomy, comparison table)]
+  X --> D[(SURVEY_SECTIONS<br/>drafts)]
+  D --> R[Referee pass + harness rules]
+  R -->|gaps| T
+  R --> A[Assemble: numbered citations, references]
+  H --> G1{{Outline review}}
+  H --> G2{{Publication review}}
+  H --> K[(OracleSaver checkpoints)]

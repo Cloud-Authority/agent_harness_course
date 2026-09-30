@@ -80,6 +80,7 @@ schedules, and a second model that decides beside the model that reasons.
 | [Custom harness notebook](part_2/custom_harness/notebook/) | The harness built from first principles on Oracle AI Database 26ai, Oracle Agent Memory, LangGraph, Claude and a System One model | Reading and running every line |
 | [Custom harness appbook](part_2/custom_harness/appbook/) | The same assistant as a running application, with fourteen chapters and a data explorer | Using the assistant, then opening up its parts |
 | [Harness done for you](part_2/harness_done_for_you/) | The same jobs on MemoRizz, pi, Hermes and DeepSeek | Seeing what a packaged harness decides for you |
+| [Advanced](part_2/advanced/) | A trip-booking workflow with a saga and crash recovery; a deep-research harness that writes a cited survey paper; MemoRizz's meta-harness read from its source and run across Claude Code, Codex and pi | The three modes an agentic application runs in |
 
 Every lesson runs on a practice workspace built from public data: one mailbox
 from [`corbt/enron-emails`](https://huggingface.co/datasets/corbt/enron-emails),
@@ -118,7 +119,9 @@ python -m pip install -r requirements.txt
 jupyter lab ppa_custom_complete.ipynb
 ```
 
-Begin with the [Part 2 guide](part_2/README.md).
+Begin with the [Part 2 guide](part_2/README.md). The advanced track has its own
+[guide](part_2/advanced/README.md), two more appbooks on ports 8040 and 8041, and a
+survey paper the deep-research harness wrote, in `part_2/advanced/deep_research/samples/`.
 
 ## Repository guide
 
