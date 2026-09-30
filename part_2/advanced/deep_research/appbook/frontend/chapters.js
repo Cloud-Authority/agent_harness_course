@@ -40,6 +40,10 @@ APP.register({
   render: async (root) => {
     const draw = async () => {
       const papers = (await APP.api("/api/papers")).papers; const data = await APP.loadPaper();
+      let survey = null;
+      if (data && data.sections.length && !data.busy) {
+        try { const text = await (await fetch(`/api/papers/${data.paper_id}/paper.md`)).text(); if (!text.startsWith("{")) survey = text; } catch (e) {}
+      }
       if (!root.isConnected) return;
       root.innerHTML = `<div class="grid wide-left" style="margin-top:20px"><div>
         <div class="panel"><div class="panel-head"><h2 class="panel-title">A new paper</h2></div><div class="panel-body">
@@ -53,7 +57,8 @@ APP.register({
             ${["published", "awaiting_publication", "awaiting_person"].includes(data.status) && data.sections.length ? `<div class="row" style="margin-bottom:12px"><a class="primary" href="#read">Read the paper</a><a class="secondary" href="/api/papers/${esc(data.paper_id)}/paper.html" target="_blank" rel="noopener">Open as a page</a><a class="secondary" href="/api/papers/${esc(data.paper_id)}/paper.md" target="_blank" rel="noopener">Markdown</a>${data.paper?.markdown ? `<span class="faint">file: ${esc(data.paper.markdown)}</span>` : ""}</div>` : ""}
             <div class="tiles" style="margin-top:0"><div class="tile"><span>Sources</span><strong>${data.sources}</strong><small>pages read</small></div><div class="tile"><span>Sections</span><strong>${data.sections.length}</strong><small>of ${data.outline.length}</small></div><div class="tile"><span>Round</span><strong>${data.round}</strong><small>of ${APP.status.limits.max_rounds}</small></div><div class="tile"><span>Checkpoints</span><strong>${data.checkpoints}</strong></div></div>
             ${data.sections.length ? `<div style="margin-top:14px">${APP.table(["title", "words", "citations", "round"], data.sections, (r, c) => c === "words" || c === "citations" ? `${r[c]} ${(c === "words" && r[c] < APP.status.limits.min_words) || (c === "citations" && r[c] < APP.status.limits.min_citations) ? APP.pill("low", "warn") : ""}` : esc(r[c]))}</div>` : ""}
-            </div></div>${gatePanel(data)}` : ""}
+            </div></div>${gatePanel(data)}
+          ${survey ? `<div class="panel" style="margin-top:16px"><div class="panel-head"><h2 class="panel-title">The survey</h2><span class="row"><a class="secondary small" href="/api/papers/${esc(data.paper_id)}/paper.html" target="_blank" rel="noopener">Open as a page</a><a class="secondary small" href="/api/papers/${esc(data.paper_id)}/paper.md" target="_blank" rel="noopener">Markdown</a></span></div><div class="panel-body survey-copy result-copy">${APP.markdown(survey)}</div></div>` : ""}` : ""}
         </div><div>
         <div class="panel"><div class="panel-head"><h2 class="panel-title">Papers</h2></div><div class="panel-body flush"><div class="table-wrap"><table class="list"><tbody>${papers.map(p => `<tr data-paper="${esc(p.paper_id)}" style="cursor:pointer"><td><span class="mono">${esc(p.paper_id)}</span><br><small class="faint">${esc((p.title || p.subject || "").slice(0, 48))}</small></td><td>${APP.pill(p.busy ? "working" : p.status, p.busy ? "warn" : APP.tone(p.status))}</td></tr>`).join("") || `<tr><td class="faint">No papers yet.</td></tr>`}</tbody></table></div></div></div>
         <div class="panel" style="margin-top:16px"><div class="panel-head"><h2 class="panel-title">Live trace</h2></div><div class="panel-body" id="trace">${traceLines(data?.ledger || [])}</div></div>

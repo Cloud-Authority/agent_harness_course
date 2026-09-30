@@ -27,3 +27,10 @@
 .graph-svg .gedge { stroke:var(--faint); stroke-width:1.2; fill:none; marker-end:url(#arrow); }
 .graph-svg .gedge.conditional { stroke-dasharray:4 3; }
 .graph-svg .gnode { cursor:pointer; }
+
+/* The survey, read in place. */
+.survey-copy { max-height: 75vh; overflow: auto; font-family: Georgia, "Times New Roman", serif; font-size: 14px; line-height: 1.6; }
+.survey-copy h2 { font-size: 1.25em; margin-top: 1.6em; }
+.survey-copy h3 { font-size: 1.05em; margin-top: 1.2em; }
+.survey-copy table.list { font-size: 12px; }
+.survey-copy p { margin: 0 0 .9em; }
