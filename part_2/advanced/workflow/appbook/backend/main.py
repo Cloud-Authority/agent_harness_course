@@ -120,8 +120,7 @@ def status() -> dict:
             "database": {"dsn": oracle.ORA.dsn, "user": oracle.ORA.user, "reachable": oracle.reachable()},
             "usage": dict(USAGE), "runs": {k: v for k, v in STATE["runs"].items()}}
     if STATE["ready"]:
-        info["database"]["version"] = oracle.version()
-        info["tables"] = explorer_tables(PREFIXES)
+        info["database"]["version"] = STATE.setdefault("version", oracle.version())   # the explorer lists tables when opened
     return info
 
 
