@@ -17,13 +17,14 @@ LangGraph's checkpoint tables.
 | View | What it shows |
 |---|---|
 | Book a trip | A form; the selected trip's status, preferences used, understood request, the itinerary card with approve, change and reject, the bookings, and a live trace of every node |
-| 1. Architecture and the graph | The components with a live status, and the compiled graph with the selected trip's path lit |
-| 2. Traveller memory | Recall by meaning, remember a statement, forget a traveller |
-| 3. Real search evidence | Every page read and every typed offer, with its confidence |
-| 4. The booking saga and compensation | Arm a provider fault, then approve: the flight is cancelled, the next hotel is chosen, the traveller is asked again |
-| 5. Crash and resume | Runs the two-process proof and streams its lines |
-| 6. System One: a model that decides | The four closed decisions Jev answers, the calls made for the selected trip with their answers, and what they cost |
-| 7. Ledger, checkpoints and cost | The ledger, the checkpoint count, the model calls of this process; a reset |
+| 1. Reference architecture | Six tiers, fifteen components with icons and technologies, nineteen typed data flows; select a component to read its role; simulate a run (plan and book, a provider fails, crash and resume) step by step, with the current step shown above the diagram |
+| 2. The compiled graph | The components with a live status, and the compiled graph with the selected trip's path lit |
+| 3. Traveller memory | Recall by meaning, remember a statement, forget a traveller |
+| 4. Real search evidence | Every page read and every typed offer, with its confidence |
+| 5. The booking saga and compensation | Arm a provider fault, then approve: the flight is cancelled, the next hotel is chosen, the traveller is asked again |
+| 6. Crash and resume | Runs the two-process proof and streams its lines |
+| 7. System One: a model that decides | The four closed decisions Jev answers, the calls made for the selected trip with their answers, and what they cost |
+| 8. Ledger, checkpoints and cost | The ledger, the checkpoint count, the model calls of this process; a reset |
 
 The data explorer under every view lists the workflow's tables, the memory store's tables
 (`TRIPMEM_*`) and LangGraph's checkpoint tables, read-only, newest rows first.

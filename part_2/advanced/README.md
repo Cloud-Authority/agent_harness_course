@@ -167,6 +167,18 @@ part_2/advanced/.venv/bin/python part_2/advanced/scripts/trip_crash_and_resume.p
 MEMORIZZ_SRC=~/Desktop/memorizz/src part_2/advanced/.venv/bin/python part_2/advanced/scripts/metaharness_plan_demo.py
 ```
 
+Two more write a survey from the command line, approving both gates, and continue one
+from its last checkpoint; the sample paper was made this way:
+
+```bash
+part_2/advanced/.venv/bin/python part_2/advanced/scripts/survey_run.py "agent harness engineering"
+part_2/advanced/.venv/bin/python part_2/advanced/scripts/survey_continue.py <paper_id>
+```
+
+`scripts/check_notebook_names.py <notebook>` is a static check worth running before a
+notebook is executed: it lists every name a code cell uses without an earlier cell
+defining or importing it.
+
 ## What is honest about the results
 
 - Prices in the trip workflow are what search pages showed at the time, labelled with a

@@ -15,12 +15,13 @@ as the trip workflow's. Published papers are written to `part_2/advanced/deep_re
 | View | What it shows |
 |---|---|
 | Write a survey | A form; the selected paper's progress by section, the outline to approve, the paper to approve, and a live trace |
-| 1. Architecture and the graph | The components, and the compiled graph with the selected paper's path lit |
-| 2. The evidence library | Every page read, and a search of the library by meaning through the database's vectors |
-| 3. Typed reading and the framework | The notes, the categories, the comparison table, the open questions |
-| 4. Rules and the referee | What the harness counted, and what the referee found, per pass |
-| 5. The paper | The assembled paper, with links to the HTML and the Markdown |
-| 6. Ledger, checkpoints and cost | The ledger, checkpoints, model calls; a reset |
+| 1. Reference architecture | Six tiers, fifteen components with icons and technologies, twenty-one typed data flows; select a component to read its role; simulate a run (a survey with both gates, a stopped run continues) step by step, with the current step shown above the diagram |
+| 2. The compiled graph | The components, and the compiled graph with the selected paper's path lit |
+| 3. The evidence library | Every page read, and a search of the library by meaning through the database's vectors |
+| 4. Typed reading and the framework | The notes, the categories, the comparison table, the open questions |
+| 5. Rules and the referee | What the harness counted, and what the referee found, per pass |
+| 6. The paper | The assembled paper, readable in place, with links to the HTML and the Markdown |
+| 7. Ledger, checkpoints and cost | The ledger, checkpoints, model calls; a reset |
 
 A paper costs about forty model calls. The limits (sections, sources per section, words
 and citations per section, revision rounds) are in `backend/harness/config.py` and shown
