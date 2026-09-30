@@ -63,7 +63,7 @@
         return `<div class="arch-groups">${[...groups].map(([name, items]) => `<div class="arch-group" style="--n:${items.length}"><h4>${esc(name)}</h4><div class="arch-nodes">${items.map(node).join("")}</div></div>`).join("")}</div>`;
       };
 
-      root.innerHTML = `<section id="refarch-section"><h2 class="panel-title" style="margin:20px 0 6px">Reference architecture</h2><p class="field-help">The application as built: seven tiers, every component with its technology, and the data that flows between them. Select a component to read its role; play a run to watch one request move through the system. The component map below it is drawn from the same backend and checks every status live.</p><div id="refarch"></div></section>
+      root.innerHTML = `<section id="refarch-section"><h2 class="panel-title" style="margin:20px 0 6px">Reference architecture</h2><p class="field-help">The application as built: six tiers, every component with its technology, and the data that flows between them. Select a component to read its role; play a run to watch one request move through the system. The component map below it is drawn from the same backend and checks every status live.</p><div id="refarch"></div></section>
         <h2 class="panel-title" style="margin:28px 0 6px">Component map, checked live</h2><section class="arch" id="arch">
         <div class="arch-bar">
           <div class="arch-modes" role="group" aria-label="What the diagram shows">

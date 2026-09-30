@@ -119,9 +119,12 @@ plane, models, tools and external services, data and state on Oracle AI Database
 observability), every component with its icon, name and technology, and every data flow
 between them, typed as request, data, control, write-or-read or event. Select a
 component to read what it does and what flows through it. **Simulate a run** plays one
-execution across the diagram step by step: a token travels each flow while the step's
-note and the state it leaves behind (the table, the checkpoint count, the status) show
-beside it. The trip appbook has three runs (plan and book; a provider fails, with
+execution across the diagram step by step: a token travels each flow while the current
+step, its note and the state it leaves behind (the table, the checkpoint count, the
+status) show in the strip above the diagram, so nothing has to scroll; **Fit to window**
+scales the whole diagram to the screen. Flows between boxes of one tier run in lanes
+under or above the boxes, never through a neighbour; labels are placed where they cover
+nothing. The trip appbook has three runs (plan and book; a provider fails, with
 compensation and the like-for-like question; crash and resume) and the survey appbook
 two (write a survey with both gates; a stopped run continues). The diagram and the
 player are one shared module, [`shared/frontend/refarch.js`](shared/frontend/refarch.js);

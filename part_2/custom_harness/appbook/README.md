@@ -134,8 +134,9 @@ technologies, and typed data flows (request, data, control, write or read,
 event). It is data in `frontend/refarch-spec.js`, rendered by
 `frontend/refarch.js`, the module the Part 2 advanced appbooks share. **Simulate
 a run** plays one execution across it: a token travels each flow while the
-step's note and the state it leaves behind (the table written, the checkpoint,
-the status) show beside it.
+current step, its note and the state it leaves behind (the table written, the
+checkpoint, the status) show in the strip above the diagram; **Fit to window**
+scales the diagram to the screen.
 
 `GET /api/architecture` returns the structure with a status on every
 component. `GET /api/architecture/status` returns statuses only. A status is
