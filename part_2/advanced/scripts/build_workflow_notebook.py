@@ -210,12 +210,18 @@ conversation it never had.
          code(lift(H / "config.py", "TripConfig", "CFG", "_clients", "claude", "tavily")),
          code(lift(H / "memory.py", "_memory", "agent_memory", "ensure_traveller")),
          code(lift(H / "memory.py", "memory_key", "remember", "recall", "forget_traveller")),
-         md("### Seed what this traveller is known to prefer ⭐\n\nThree statements, stored once each. Storing one again is a no-op."),
+         md("""### Seed what this traveller is known to prefer ⭐
+
+The traveller is forgotten first, so this cell starts from nothing every time it runs.
+Three statements are then stored, and one is stored again: the memory id is a hash of
+the content, so the second write finds the row and does nothing (`stored: False`)."""),
          code('''TRAVELLER = "richmond"
+forget_traveller(TRAVELLER)
 for statement in ["Prefers a direct flight and a morning departure.",
                   "Likes to stay near the old town or city centre.",
                   "Only needs a small automatic car."]:
     print(remember(TRAVELLER, statement))
+print("again:", remember(TRAVELLER, "Only needs a small automatic car."))
 print(recall(TRAVELLER, "a trip to Lisbon with a flight, a hotel and a car"))'''),
          star=True),
     part("Typed answers from the model", """
