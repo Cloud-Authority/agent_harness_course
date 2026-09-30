@@ -79,7 +79,16 @@ APP.register({
 });
 
 APP.register({
-  id: "architecture", n: 1, title: "Architecture and the graph",
+  id: "refarch", n: 1, title: "Reference architecture",
+  blurb: "The application as built: six tiers, every component with its technology, and the data that flows between them. Select a component to read its role; play a run to watch one execution move through the system.",
+  render: async (root) => {
+    root.innerHTML = `<div id="refarch"></div><div class="notice" style="margin-top:16px"><strong>How to read it.</strong> Solid green lines are requests from a person; grey lines carry data; dashed amber lines are control (a decision, a pause, a resume); purple lines write to or read from Oracle AI Database; dotted lines are events. The run player replays a real execution's steps: each step names the flow it uses and what the state looks like afterwards.</div>`;
+    RefArch.render($("#refarch", root), TRIP_REFARCH);
+  },
+});
+
+APP.register({
+  id: "architecture", n: 2, title: "The compiled graph",
   blurb: "The components the harness is made of, and the graph LangGraph compiles from the node functions. When a trip is selected, the nodes it has passed through light up.",
   render: async (root) => {
     const shape = await APP.api("/api/graph"); const data = await APP.loadTrip(); const { done, now, bad } = APP.tripNodes(data);
@@ -94,7 +103,7 @@ APP.register({
 });
 
 APP.register({
-  id: "memory", n: 2, title: "Traveller memory",
+  id: "memory", n: 3, title: "Traveller memory",
   blurb: "Oracle Agent Memory keeps what a traveller prefers, across trips. The harness writes memories on purpose and recalls them by meaning when a request arrives.",
   render: async (root) => {
     const draw = async () => {
@@ -115,7 +124,7 @@ APP.register({
 });
 
 APP.register({
-  id: "evidence", n: 3, title: "Real search evidence",
+  id: "evidence", n: 4, title: "Real search evidence",
   blurb: "Every page the harness read for the selected trip, and every typed offer it extracted. An offer always names the page it came from, and carries a confidence.",
   render: async (root) => {
     const data = await APP.loadTrip();
@@ -128,7 +137,7 @@ APP.register({
 });
 
 APP.register({
-  id: "saga", n: 4, title: "The booking saga and compensation",
+  id: "saga", n: 5, title: "The booking saga and compensation",
   blurb: "Flight, hotel, car: three steps in a fixed order against a system of record. Make a provider fail on purpose and watch the harness cancel what it booked, fall back to the next offer, and ask the traveller again.",
   render: async (root) => {
     const draw = async () => {
@@ -149,7 +158,7 @@ APP.register({
 });
 
 APP.register({
-  id: "crash", n: 5, title: "Crash and resume",
+  id: "crash", n: 6, title: "Crash and resume",
   blurb: "Two real processes. The first plans a trip, approves it, and is killed inside book_flight after the booking is committed. The second continues from the last checkpoint: the flight is replayed, not booked twice.",
   render: async (root) => {
     root.innerHTML = `<div class="panel" style="margin-top:20px"><div class="panel-head"><h2 class="panel-title">Run the two-process proof</h2><button class="primary" id="crash-run">Kill a process and continue</button></div><div class="panel-body"><p class="field-help">About two minutes: the child process searches and plans, then exits with code 3 on purpose. The parent then continues the same trip. The script is <code>part_2/advanced/scripts/trip_crash_and_resume.py</code>.</p><div class="console" id="crash-console">Press the button.</div></div></div>`;
@@ -160,7 +169,7 @@ APP.register({
 });
 
 APP.register({
-  id: "system_one", n: 6, title: "System One: a model that decides",
+  id: "system_one", n: 7, title: "System One: a model that decides",
   blurb: "Claude reasons, plans and writes. Four decisions in this workflow have a closed set of answers, and a System One model (Jev) answers each with a probability in about a third of a second. The harness owns the threshold, falls back to a rule without the key, and logs every call.",
   render: async (root) => {
     const s = await APP.api("/api/system_one/status"); const data = await APP.loadTrip();
@@ -174,7 +183,7 @@ APP.register({
 });
 
 APP.register({
-  id: "ledger", n: 7, title: "Ledger, checkpoints and cost",
+  id: "ledger", n: 8, title: "Ledger, checkpoints and cost",
   blurb: "What the database holds about the selected trip: every step in the ledger, the checkpoints LangGraph wrote, and what the model calls cost.",
   render: async (root) => {
     const data = await APP.loadTrip(); const s = APP.status;

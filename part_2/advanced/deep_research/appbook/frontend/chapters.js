@@ -30,7 +30,7 @@ const gatePanel = (data) => {
       <dl class="kv"><dt>Title</dt><dd><strong>${esc(asked.title)}</strong></dd><dt>Questions</dt><dd>${(asked.scope?.research_questions || []).map(q => esc(q)).join("<br>")}</dd><dt>Criteria</dt><dd>${(asked.scope?.inclusion_criteria || []).map(q => esc(q)).join("<br>")}</dd></dl>
       ${APP.table(["position", "kind", "title", "purpose", "queries"], asked.outline || [], (r, c) => c === "queries" ? esc((r.queries || []).join(" · ")) : esc(r[c]))}
       <label for="note">A note, for "revise"</label><textarea id="note" placeholder="Add a section on evaluation harnesses; merge the two memory sections."></textarea>`
-      : `<dl class="kv"><dt>Title</dt><dd><strong>${esc(asked.title)}</strong></dd><dt>Size</dt><dd>${asked.counts?.sections} sections · ${asked.counts?.words} words · ${asked.counts?.sources_read} sources read · ${asked.counts?.sources_cited} cited</dd><dt>Abstract</dt><dd>${esc(asked.abstract)}</dd></dl><p class="field-help">Approve to write the Markdown and HTML files. The paper is already readable in chapter 5.</p>`}
+      : `<dl class="kv"><dt>Title</dt><dd><strong>${esc(asked.title)}</strong></dd><dt>Size</dt><dd>${asked.counts?.sections} sections · ${asked.counts?.words} words · ${asked.counts?.sources_read} sources read · ${asked.counts?.sources_cited} cited</dd><dt>Abstract</dt><dd>${esc(asked.abstract)}</dd></dl><p class="field-help">Approve to write the Markdown and HTML files. The paper is already readable below, and in chapter 6.</p>`}
     <div class="row" style="margin-top:10px"><button class="primary" data-decide="approve">Approve</button>${outline ? `<button class="secondary" data-decide="revise">Revise the outline</button>` : ""}<button class="danger-button" data-decide="reject">Reject</button></div></div></div>`;
 };
 
@@ -75,7 +75,16 @@ APP.register({
 });
 
 APP.register({
-  id: "architecture", n: 1, title: "Architecture and the graph",
+  id: "refarch", n: 1, title: "Reference architecture",
+  blurb: "The application as built: six tiers, every component with its technology, and the data that flows between them. Select a component to read its role; play a run to watch one paper move through the system.",
+  render: async (root) => {
+    root.innerHTML = `<div id="refarch"></div><div class="notice" style="margin-top:16px"><strong>How to read it.</strong> Solid green lines are requests from a person; grey lines carry data; dashed amber lines are control (a check, a pause, a resume); purple lines write to or read from Oracle AI Database; dotted lines are events. The run player replays a real execution's steps: each step names the flow it uses and what the state looks like afterwards.</div>`;
+    RefArch.render($("#refarch", root), SURVEY_REFARCH);
+  },
+});
+
+APP.register({
+  id: "architecture", n: 2, title: "The compiled graph",
   blurb: "The components, and the graph LangGraph compiles. gather and write are one node each in the graph but run once per section, made with Send.",
   render: async (root) => {
     const shape = await APP.api("/api/graph"); const data = await APP.loadPaper(); const { done, now, bad } = paperNodes(data); const s = APP.status;
@@ -88,7 +97,7 @@ APP.register({
 });
 
 APP.register({
-  id: "library", n: 2, title: "The evidence library",
+  id: "library", n: 3, title: "The evidence library",
   blurb: "Every page the harness read for the selected paper, stored with its text and an embedding made inside Oracle AI Database. Ask it by meaning.",
   render: async (root) => {
     const data = await APP.loadPaper(); if (!data) { root.innerHTML = APP.empty("Select or start a paper first."); return; }
@@ -100,7 +109,7 @@ APP.register({
 });
 
 APP.register({
-  id: "notes", n: 3, title: "Typed reading and the framework",
+  id: "notes", n: 4, title: "Typed reading and the framework",
   blurb: "What the model read each source into, and the framework it organised from the notes: categories, a comparison table, open questions.",
   render: async (root) => {
     const data = await APP.loadPaper(); if (!data) { root.innerHTML = APP.empty("Select or start a paper first."); return; }
@@ -111,7 +120,7 @@ APP.register({
 });
 
 APP.register({
-  id: "review", n: 4, title: "Rules and the referee",
+  id: "review", n: 5, title: "Rules and the referee",
   blurb: "Two kinds of quality gate: what the harness can count, and what the model judges. A revise verdict with queries sends the run back to gather, once.",
   render: async (root) => {
     const data = await APP.loadPaper(); if (!data) { root.innerHTML = APP.empty("Select or start a paper first."); return; }
@@ -122,7 +131,7 @@ APP.register({
 });
 
 APP.register({
-  id: "read", n: 5, title: "The paper",
+  id: "read", n: 6, title: "The paper",
   blurb: "The assembled paper, as the harness wrote it: numbered citations in order of first use, a reference list in which every entry is a page it read, and a closing note on how it was made.",
   render: async (root) => {
     const data = await APP.loadPaper(); if (!data) { root.innerHTML = APP.empty("Select or start a paper first."); return; }
@@ -133,7 +142,7 @@ APP.register({
 });
 
 APP.register({
-  id: "ledger", n: 6, title: "Ledger, checkpoints and cost",
+  id: "ledger", n: 7, title: "Ledger, checkpoints and cost",
   blurb: "Every step of the selected paper, the checkpoints LangGraph wrote, and what the model calls cost this process.",
   render: async (root) => {
     const data = await APP.loadPaper(); const s = APP.status;

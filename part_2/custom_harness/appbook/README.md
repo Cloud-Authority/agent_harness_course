@@ -100,7 +100,7 @@ connect a real mailbox if you do not want its text traced.
 | View | What it shows |
 |---|---|
 | Assistant | Chat with a live trace, inline approval cards, today's agenda, the governed task list, inbox triage, quick capture, the day plan, the running focus timer and armed jobs |
-| 1. Architecture | Every component in eight lanes, each with a live status. Select one to read what it is, why the harness needs it, its technology and version, its tables, endpoints, tools and files. Trace one of four requests step by step. The ledger of what is built, partial and missing |
+| 1. Architecture | First the reference architecture: six tiers, twenty components with icons and technologies, twenty-five typed data flows, and a player that simulates a run (a morning brief, a reply that needs approval, a focus timer firing) step by step across the diagram. Then the component map checked live: every component in eight lanes with a status. Select one to read what it is, why the harness needs it, its technology and version, its tables, endpoints, tools and files. Trace one of four requests step by step. The ledger of what is built, partial and missing |
 | 2. Connections | No sign-in needed. The practice workspace, what leaves the machine, safe mode, and the optional connectors |
 | 3. Systems of record and MCP | Every tool the three servers offer beside the harness allowlist; a live read; tools that are never exposed |
 | 4. Memory and the workday scratch pad | Long-term and episodic memory, quick capture, the day plan, end-of-day promotion with content-hash dedupe, forgetting |
@@ -127,6 +127,15 @@ notebook's reference architecture
 both show one picture. The components are what the appbook really runs. The
 store is named as it is: Oracle AI Database when the appbook runs on it, the
 local store when it does not. Recall is keyword overlap and says so.
+
+The reference architecture at the top of the chapter is the same picture drawn
+the way solution architects draw one: tiers, components with icons and
+technologies, and typed data flows (request, data, control, write or read,
+event). It is data in `frontend/refarch-spec.js`, rendered by
+`frontend/refarch.js`, the module the Part 2 advanced appbooks share. **Simulate
+a run** plays one execution across it: a token travels each flow while the
+step's note and the state it leaves behind (the table written, the checkpoint,
+the status) show beside it.
 
 `GET /api/architecture` returns the structure with a status on every
 component. `GET /api/architecture/status` returns statuses only. A status is

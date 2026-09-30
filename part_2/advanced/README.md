@@ -113,6 +113,21 @@ explorer. The survey appbook has a form, the outline to approve, live progress b
 section, the evidence library searchable by meaning, the notes and the framework, the
 referee's findings, the paper itself, and the same explorer.
 
+Chapter 1 of each appbook is the **reference architecture** of the running application,
+drawn the way solution architects draw one: six tiers (people and channel, control
+plane, models, tools and external services, data and state on Oracle AI Database 26ai,
+observability), every component with its icon, name and technology, and every data flow
+between them, typed as request, data, control, write-or-read or event. Select a
+component to read what it does and what flows through it. **Simulate a run** plays one
+execution across the diagram step by step: a token travels each flow while the step's
+note and the state it leaves behind (the table, the checkpoint count, the status) show
+beside it. The trip appbook has three runs (plan and book; a provider fails, with
+compensation and the like-for-like question; crash and resume) and the survey appbook
+two (write a survey with both gates; a stopped run continues). The diagram and the
+player are one shared module, [`shared/frontend/refarch.js`](shared/frontend/refarch.js);
+each appbook describes its own architecture as data in its `frontend/refarch-spec.js`,
+so the picture is the application as built, not a slide beside it.
+
 ## The meta-harness notebook and MemoRizz
 
 The notebook imports MemoRizz from the checkout named by `MEMORIZZ_SRC` (default
