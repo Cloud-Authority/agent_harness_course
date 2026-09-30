@@ -1,0 +1,19 @@
+sequenceDiagram
+  participant H as Host (this notebook)
+  participant M as MetaHarness
+  participant O as Oracle AI Database
+  participant A as Adapter (subprocess)
+  H->>M: run(HarnessTask)
+  M->>O: retrieve memory → context pack
+  M->>M: route: which harness, is it ready
+  M->>O: create run (queued)
+  alt edits, network, secrets or governed writes
+    M->>O: propose approval, run pending_approval
+    H->>M: approve + resume
+  end
+  M->>A: build command, minimal child environment, workspace lease
+  A-->>M: stream → normalised events
+  M->>O: append every event
+  M->>M: verification command on the host
+  M->>O: result, diff, fingerprints, usage, cost
+  M->>O: handoff to conversation memory

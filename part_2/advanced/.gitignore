@@ -1,0 +1,14 @@
+# Local tools for building the notebooks (Mermaid CLI)
+.tools/
+node_modules/
+
+# Papers written by the deep-research harness. One sample is kept in deep_research/samples/
+deep_research/output/
+deep_research/notebook/output/
+
+# Notebook build scratch
+**/diagrams/.mermaid-config.json
+**/diagrams/.puppeteer.json
+__pycache__/
+.pytest_cache/
+.venv/

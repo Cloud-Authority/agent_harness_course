@@ -1,0 +1,14 @@
+flowchart TB
+  P[Maintainer] -->|task, plan| M[MemoRizz MetaHarness]
+  M --> X[HarnessContextBuilder<br/>memory → context pack]
+  M --> R[HarnessRouter<br/>which harness is ready]
+  M --> S[security<br/>workspace roots · child env · redaction]
+  M --> A{{Approval store<br/>edits wait for a person}}
+  M --> C1[Claude Code]
+  M --> C2[Codex]
+  M --> C3[pi]
+  M --> C4[Hermes]
+  C1 & C2 & C3 & C4 --> E[Normalised events<br/>messages · tools · commands · files · usage]
+  E --> V[Host verification<br/>python -m pytest -q]
+  M --> O[(Oracle AI Database<br/>memory · runs · events · approvals · orchestrations)]
+  E --> O

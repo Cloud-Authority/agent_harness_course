@@ -1,0 +1,12 @@
+flowchart TB
+  S([start]) --> SC[scope] --> OR{{outline_review · interrupt}}
+  OR -->|revise| RS[rescope] --> SC
+  OR -->|reject| CL[close] --> E1([end])
+  OR -->|approve · Send per section| G[gather ×N]
+  G --> RD[read] --> OG[organise]
+  OG -->|Send per section| W[write ×N]
+  W --> RV[review]
+  RV -->|gaps and rounds left| G
+  RV --> AS[assemble] --> PR{{publication_review · interrupt}}
+  PR -->|approve| PB[publish] --> E2([end])
+  PR -->|reject| CL
