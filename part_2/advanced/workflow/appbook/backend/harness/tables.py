@@ -5,7 +5,8 @@ the harness read, so an offer can always be traced to the page it came from.
 ``TRIP_BOOKINGS`` is the system of record for bookings: it is what the outside
 world would hold, so a crash between two bookings must never lose or double a
 row. ``TRIP_PROVIDER_FAULTS`` lets a lesson make a provider fail on purpose.
-``TRIP_LEDGER`` is the audit trail a traveller could be shown.
+``TRIP_LEDGER`` is the audit trail a traveller could be shown. ``TRIP_DECISIONS``
+holds every question put to System One, with its time and its tokens.
 """
 from __future__ import annotations
 
@@ -16,7 +17,7 @@ from datetime import datetime, timezone
 from shared.oracle import ddl, execute, rows
 
 TRIP_TABLES = ["trip_requests", "trip_evidence", "trip_offers", "trip_bookings",
-               "trip_provider_faults", "trip_ledger"]
+               "trip_provider_faults", "trip_ledger", "trip_decisions"]
 
 
 def create_trip_tables() -> None:
@@ -27,7 +28,8 @@ def create_trip_tables() -> None:
     ddl("""CREATE TABLE trip_evidence (
         evidence_id VARCHAR2(40) PRIMARY KEY, trip_id VARCHAR2(40) NOT NULL, component VARCHAR2(20) NOT NULL,
         query VARCHAR2(1000) NOT NULL, url VARCHAR2(2000) NOT NULL, title VARCHAR2(1000),
-        snippet VARCHAR2(4000), score NUMBER, fetched_at TIMESTAMP WITH TIME ZONE DEFAULT SYSTIMESTAMP)""")
+        snippet VARCHAR2(4000), score NUMBER, relevance NUMBER, attack NUMBER, kept NUMBER,
+        fetched_at TIMESTAMP WITH TIME ZONE DEFAULT SYSTIMESTAMP)""")
     ddl("""CREATE TABLE trip_offers (
         offer_id VARCHAR2(40) PRIMARY KEY, trip_id VARCHAR2(40) NOT NULL, component VARCHAR2(20) NOT NULL,
         provider VARCHAR2(200), summary VARCHAR2(1000), price NUMBER, currency VARCHAR2(3),
@@ -40,6 +42,11 @@ def create_trip_tables() -> None:
     ddl("""CREATE TABLE trip_provider_faults (
         fault_id VARCHAR2(40) PRIMARY KEY, component VARCHAR2(20) NOT NULL, match VARCHAR2(200) NOT NULL,
         fault VARCHAR2(40) NOT NULL, remaining NUMBER NOT NULL)""")
+    ddl("ALTER TABLE trip_evidence ADD (relevance NUMBER, attack NUMBER, kept NUMBER)")   # a schema made before System One
+    ddl("""CREATE TABLE trip_decisions (
+        decision_id VARCHAR2(40) PRIMARY KEY, trip_id VARCHAR2(40) NOT NULL, kind VARCHAR2(30) NOT NULL,
+        questions NUMBER, seconds NUMBER, input_tokens NUMBER, outcome VARCHAR2(60), summary VARCHAR2(400),
+        detail CLOB, at TIMESTAMP WITH TIME ZONE DEFAULT SYSTIMESTAMP)""")
     ddl("""CREATE TABLE trip_ledger (
         entry_id VARCHAR2(40) PRIMARY KEY, trip_id VARCHAR2(40) NOT NULL, node VARCHAR2(40) NOT NULL,
         kind VARCHAR2(30) NOT NULL, detail CLOB, at TIMESTAMP WITH TIME ZONE DEFAULT SYSTIMESTAMP)""")

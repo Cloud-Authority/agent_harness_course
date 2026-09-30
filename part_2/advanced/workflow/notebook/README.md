@@ -5,7 +5,7 @@ from a traveller, searches the real web for flights, hotels and cars, composes a
 itinerary, pauses for approval, books the three parts as a saga with compensation, and
 survives being cut off between two bookings.
 
-Needs Docker (Oracle AI Database Free), `ANTHROPIC_API_KEY` and `TAVILY_API_KEY`. About
+Needs Docker (Oracle AI Database Free), `ANTHROPIC_API_KEY` and `TAVILY_API_KEY`; `TYPESAFE_API_KEY` switches System One on. About
 three minutes to run; the outputs of the last execution are saved in the notebook.
 
 | Part | What it builds | Live |
@@ -14,14 +14,15 @@ three minutes to run; the outputs of the last execution are saved in the noteboo
 | 2 | The system of record and the ledger | |
 | 3 | Traveller memory on Oracle Agent Memory | ⭐ |
 | 4 | Typed answers from the model | |
-| 5 | Real search evidence with a confidence on every offer | ⭐ |
-| 6 | Understanding and planning | |
-| 7 | The booking system of record: idempotency, faults, cancellation | |
-| 8 | The durable graph | ⭐ |
-| 9 | A trip, up to the approval gate | ⭐ |
-| 10 | Change, failure, compensation | ⭐ |
-| 11 | Crash and resume | ⭐ |
-| 12 | What the database holds | |
+| 5 | A model that decides: Jev on four closed questions | ⭐ |
+| 6 | Real search evidence with a confidence on every offer | ⭐ |
+| 7 | Understanding and planning | |
+| 8 | The booking system of record: idempotency, faults, cancellation | |
+| 9 | The durable graph | ⭐ |
+| 10 | A trip, up to the approval gate | ⭐ |
+| 11 | Change, failure, compensation | ⭐ |
+| 12 | Crash and resume | ⭐ |
+| 13 | What the database holds | |
 
 The diagrams' sources are in `diagrams/`. The notebook is generated from the appbook's
 harness modules by `../../scripts/build_workflow_notebook.py`.

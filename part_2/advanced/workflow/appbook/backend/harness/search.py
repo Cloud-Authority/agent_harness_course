@@ -1,6 +1,8 @@
 """Real web search for offers, and typed extraction of what the pages say.
 
-Prices found this way are indicative: they are what a search engine's page
+System One screens the results first: a page that is not about this trip is
+not read, and a page that tries to give the assistant orders is kept as
+evidence but never shown to the model. Prices found this way are indicative: they are what a search engine's page
 showed at the time, not a fare held for this traveller. The harness says so on
 every offer, and a booking is made against the offer's provider, never against
 the search page.
@@ -13,6 +15,7 @@ from shared.oracle import execute
 
 from .config import CFG, tavily
 from .llm import ask_typed
+from .system_one import screen_results
 from .tables import new_id
 
 SEARCH_INSTRUCTIONS = """You read web search results about travel offers and record the offers they mention.
@@ -60,10 +63,11 @@ def keep_evidence(trip_id: str, component: str, query: str, results: list[dict])
     ids = {}
     for item in results:
         ids[item["n"]] = new_id("EV")
-        execute("INSERT INTO trip_evidence (evidence_id, trip_id, component, query, url, title, snippet, score) "
-                "VALUES (:1, :2, :3, :4, :5, :6, :7, :8)",
+        execute("INSERT INTO trip_evidence (evidence_id, trip_id, component, query, url, title, snippet, score, "
+                "relevance, attack, kept) VALUES (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11)",
                 [ids[item["n"]], trip_id, component, query[:1000], item["url"][:2000], item["title"][:1000],
-                 item["content"][:4000], item["score"]])
+                 item["content"][:4000], item["score"], item.get("relevance"), item.get("attack"),
+                 int(item.get("kept", True))])
     return ids
 
 
@@ -89,9 +93,10 @@ def find_offers(trip_id: str, component: str, request: dict, wider: bool = False
     template = (WIDER if wider else QUERIES)[component]
     query = template.format(**request, area=request.get("hotel_area", "city centre"))
     results = search_web(query)
-    evidence = keep_evidence(trip_id, component, query, results)
+    readable = screen_results(trip_id, component, request, results)   # System One: about this trip, and not an order
+    evidence = keep_evidence(trip_id, component, query, results)      # every page is kept, screened or not
     offers = []
-    for found in extract_offers(component, request, results):
+    for found in extract_offers(component, request, readable):
         offer = {**found, "offer_id": new_id("OF"), "component": component,
                  "evidence_id": evidence[found["result"]],
                  "url": next(r["url"] for r in results if r["n"] == found["result"]), "query": query}

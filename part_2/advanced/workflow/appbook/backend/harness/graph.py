@@ -20,6 +20,7 @@ from .config import CFG
 from .memory import recall, remember
 from .planning import plan_itinerary, understand_request
 from .search import find_offers
+from .system_one import decisions, like_for_like, preference_checks, relevant_preferences
 from .tables import create_trip_tables, ledger, new_id
 
 COMPONENTS = ("flight", "hotel", "car")
@@ -76,8 +77,11 @@ def maybe_crash(node: str) -> None:
 # ── nodes ────────────────────────────────────────────────────────────────────
 
 def recall_preferences(state: TripState) -> dict:
+    """Recall by meaning, then let System One say which memories bear on this request."""
     found = recall(state["traveller_id"], state["text"])
-    return {"preferences": found, **note_step(state, "recall_preferences", "memory", found)}
+    kept = relevant_preferences(state["trip_id"], state["text"], found)
+    return {"preferences": kept, **note_step(state, "recall_preferences", "memory",
+                                             {"recalled": found, "bear_on_request": kept})}
 
 
 def understand(state: TripState) -> dict:
@@ -134,11 +138,17 @@ def after_join(state: TripState) -> str:
 
 
 def plan(state: TripState) -> dict:
+    """Claude composes; System One checks each chosen offer against each preference."""
     itinerary = plan_itinerary(state["request"], state["preferences"], state["offers"], state.get("note", ""))
+    itinerary["checks"] = preference_checks(state["trip_id"], itinerary["choices"], state["preferences"])
+    for check in itinerary["checks"]:
+        if check["verdict"] == "does not":
+            itinerary["caveats"].append(f"The {check['component']} goes against: {check['preference']}")
     return {"itinerary": itinerary, "status": "awaiting_traveller",
             **note_step(state, "plan", "itinerary", {"total_gbp": itinerary["total_gbp"],
                                                       "within_budget": itinerary["within_budget"],
-                                                      "choices": [(c["component"], c["offer_id"]) for c in itinerary["choices"]]})}
+                                                      "choices": [(c["component"], c["offer_id"]) for c in itinerary["choices"]],
+                                                      "checks": [(k["component"], k["verdict"]) for k in itinerary["checks"]]})}
 
 
 def review(state: TripState) -> dict:
@@ -213,12 +223,18 @@ def compensate(state: TripState) -> dict:
     itinerary["caveats"] = [*itinerary.get("caveats", []),
                             f"The first {failed} choice failed at the provider; earlier bookings were cancelled "
                             f"and this plan uses the next best {failed}."]
-    return {"attempts": attempts, "failed": "", "itinerary": itinerary, "status": "awaiting_traveller",
+    # System One: may the fallback be booked on the approval already given, or must the traveller be asked again?
+    same, odds = like_for_like(state["trip_id"], choice["offer"], fallback, state["preferences"])
+    status = "rebooking" if same and itinerary["within_budget"] else "awaiting_traveller"
+    return {"attempts": attempts, "failed": "", "itinerary": itinerary, "status": status,
             **note_step(state, "compensate", "fallback", {"cancelled": cancelled, "component": failed,
-                                                          "now": fallback["offer_id"]})}
+                                                          "now": fallback["offer_id"], "like_for_like": odds,
+                                                          "next": "book again" if status == "rebooking" else "ask the traveller"})}
 
 
 def after_compensate(state: TripState) -> str:
+    if state["status"] == "rebooking":
+        return "book_flight"
     return "review" if state["status"] == "awaiting_traveller" else "close"
 
 
@@ -267,7 +283,7 @@ def build_graph(saver=None):
     graph.add_edge("book_flight", "book_hotel")
     graph.add_edge("book_hotel", "book_car")
     graph.add_conditional_edges("book_car", after_booking, ["compensate", "confirm"])
-    graph.add_conditional_edges("compensate", after_compensate, ["review", "close"])
+    graph.add_conditional_edges("compensate", after_compensate, ["book_flight", "review", "close"])
     graph.add_edge("confirm", END)
     graph.add_edge("close", END)
     return graph.compile(checkpointer=saver or InMemorySaver())
@@ -304,7 +320,8 @@ def outcome(trip_id: str) -> dict:
             "itinerary": values.get("itinerary"), "questions": values.get("questions", []),
             "bookings": all_bookings(trip_id), "request": values.get("request"),
             "preferences": values.get("preferences", []), "offers": {c: len(v) for c, v in values.get("offers", {}).items()},
-            "log": values.get("log", []), "checkpoints": sum(1 for _ in _runtime["saver"].list(config_for(trip_id)))}
+            "log": values.get("log", []), "checkpoints": sum(1 for _ in _runtime["saver"].list(config_for(trip_id))),
+            "decisions": len(decisions(trip_id))}
 
 
 def start_trip(text: str, traveller_id: str, trip_id: str | None = None, today: str | None = None) -> dict:

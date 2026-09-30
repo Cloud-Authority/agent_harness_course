@@ -9,6 +9,7 @@ APP.renderTopbar = () => {
   $("#topbar").innerHTML = `<span class="chip ${s.ready ? "real" : ""}">Store <b>${s.database?.reachable ? "Oracle AI Database " + (s.database.version || "") : "not reachable"}</b></span>
     <span class="chip">Model <b>${esc(s.model || "")}</b> ${s.keys?.anthropic ? APP.pill("key", "good") : APP.pill("no key", "bad")}</span>
     <span class="chip">Search <b>Tavily</b> ${s.keys?.tavily ? APP.pill("key", "good") : APP.pill("no key", "bad")}</span>
+    <span class="chip">System One <b>${s.system_one?.available ? esc(s.system_one.model) : "off"}</b> ${s.system_one?.available ? APP.pill("Jev", "good") : APP.pill("rules decide", "warn")}</span>
     <span class="chip">Model calls <b>${s.usage?.calls ?? 0}</b> · ${APP.pill(`${((s.usage?.input_tokens || 0) / 1000).toFixed(0)}k in`)}</span>
     <span class="spacer"></span>${APP.trip.id ? `<span class="chip">Trip <b>${esc(APP.trip.id)}</b></span>` : ""}`;
 };
@@ -30,7 +31,8 @@ const itineraryCard = (data) => {
   const evidence = Object.fromEntries((data.offers || []).map(o => [o.offer_id, o]));
   return `<div class="panel" style="margin-top:16px"><div class="panel-head"><h2 class="panel-title">Itinerary</h2><span class="mono faint">${APP.money(it.total_gbp)} · ${it.within_budget ? APP.pill("within budget", "good") : APP.pill("over budget", "bad")}</span></div><div class="panel-body">
     <div class="choices">${it.choices.map(c => `<div class="choice"><div class="comp">${esc(c.component)}</div><div><strong>${esc(c.offer.provider)}</strong> <span class="faint">· ${esc(c.offer.summary)}</span><div class="why">${esc(c.why)}</div><div class="row" style="margin-top:6px">${APP.pill(c.offer.confidence + " confidence", c.offer.confidence === "high" ? "good" : c.offer.confidence === "low" ? "warn" : "")}${APP.pill(`${c.alternatives.length} fallbacks`)}<a href="${esc(c.offer.url || "")}" target="_blank" rel="noopener">evidence page</a></div></div><div class="price">${APP.money(c.offer.total_gbp)}<small class="faint" style="display:block;font-weight:400">${esc(c.offer.price)} ${esc(c.offer.currency)} ${esc((c.offer.unit || "").replace("_", " "))}</small></div></div>`).join("")}</div>
-    <p style="margin-top:14px">${esc(it.summary)}</p><ul class="plain">${(it.caveats || []).map(c => `<li class="faint">${esc(c)}</li>`).join("")}</ul></div></div>`;
+    <p style="margin-top:14px">${esc(it.summary)}</p><ul class="plain">${(it.caveats || []).map(c => `<li class="faint">${esc(c)}</li>`).join("")}</ul>
+    ${(it.checks || []).length ? `<h3 class="panel-title" style="margin-top:14px">Against the traveller's preferences · System One</h3>${APP.table(["component", "preference", "verdict"], it.checks, (r, c) => c === "verdict" ? APP.pill(r[c], r[c] === "honours" ? "good" : r[c] === "does not" ? "bad" : "") : esc(r[c]))}` : ""}</div></div>`;
 };
 const decisionPanel = (data) => {
   if (!data.waiting_for_traveller) return "";
@@ -82,7 +84,7 @@ APP.register({
   render: async (root) => {
     const shape = await APP.api("/api/graph"); const data = await APP.loadTrip(); const { done, now, bad } = APP.tripNodes(data);
     const s = APP.status;
-    const parts = [["Traveller", "A person who types one sentence and decides at the gate", "always"], ["LangGraph StateGraph", "Owns the shape: order, parallel branches, the interrupt, the saga, compensation", "connected"], ["OracleSaver", "A checkpoint in Oracle AI Database after every step, one thread per trip", s.database?.reachable ? "connected" : "failing"], ["Oracle Agent Memory", "What the traveller prefers, searched by meaning inside the database", s.database?.reachable ? "connected" : "failing"], ["Tavily", "Real web search; every page read becomes evidence", s.keys?.tavily ? "configured" : "not configured"], ["Claude " + (s.model || ""), "Typed answers only: understand, extract offers, plan", s.keys?.anthropic ? "configured" : "not configured"], ["Booking system of record", "TRIP_BOOKINGS: idempotent bookings that stand for providers", "connected"], ["Ledger", "TRIP_LEDGER: every step of every run", "connected"]];
+    const parts = [["Traveller", "A person who types one sentence and decides at the gate", "always"], ["LangGraph StateGraph", "Owns the shape: order, parallel branches, the interrupt, the saga, compensation", "connected"], ["OracleSaver", "A checkpoint in Oracle AI Database after every step, one thread per trip", s.database?.reachable ? "connected" : "failing"], ["Oracle Agent Memory", "What the traveller prefers, searched by meaning inside the database", s.database?.reachable ? "connected" : "failing"], ["Tavily", "Real web search; every page read becomes evidence", s.keys?.tavily ? "configured" : "not configured"], ["Claude " + (s.model || ""), "Typed answers only: understand, extract offers, plan", s.keys?.anthropic ? "configured" : "not configured"], ["System One · " + (s.system_one?.model || "Jev"), "Closed questions answered with a probability: memories, pages, preference checks, like-for-like fallbacks", s.system_one?.available ? "connected" : "fallback"], ["Booking system of record", "TRIP_BOOKINGS: idempotent bookings that stand for providers", "connected"], ["Ledger", "TRIP_LEDGER: every step of every run", "connected"]];
     root.innerHTML = `<div class="panel" style="margin-top:20px"><div class="panel-head"><h2 class="panel-title">Components</h2></div><div class="panel-body flush">${APP.table(["component", "role", "status"], parts.map(p => ({ component: p[0], role: p[1], status: p[2] })), (r, c) => c === "status" ? APP.pill(r[c], r[c] === "connected" || r[c] === "always" ? "good" : r[c] === "configured" ? "" : "bad") : esc(r[c]))}</div></div>
       <div class="panel" style="margin-top:16px"><div class="panel-head"><h2 class="panel-title">The compiled graph</h2><span class="mono faint">${shape.nodes.length} nodes · ${shape.edges.length} edges · dashed = conditional</span></div><div class="panel-body">${APP.graphSvg(shape, done, now, bad)}<p class="field-help" id="node-note">Select a node to read what it does.</p></div></div>
       <div class="notice" style="margin-top:16px"><strong>Three searches run in the same step.</strong> <code>after_understand</code> returns a list of node names; LangGraph runs them together and <code>join_offers</code> waits for all of them. The saga is the opposite: three steps in a fixed order, each safe to run twice.</div>`;
@@ -118,8 +120,9 @@ APP.register({
   render: async (root) => {
     const data = await APP.loadTrip();
     if (!data) { root.innerHTML = APP.empty("Select or start a trip first."); return; }
+    const kept = data.evidence.filter(e => e.kept !== 0).length;
     root.innerHTML = `<div class="panel" style="margin-top:20px"><div class="panel-head"><h2 class="panel-title">Offers</h2><span class="mono faint">${data.offers.length} extracted</span></div><div class="panel-body flush">${APP.table(["component", "provider", "summary", "price", "currency", "price_gbp", "confidence"], data.offers, (r, c) => c === "confidence" ? APP.pill(r[c], r[c] === "high" ? "good" : r[c] === "low" ? "warn" : "") : esc(r[c] ?? ""))}</div></div>
-      <div class="panel" style="margin-top:16px"><div class="panel-head"><h2 class="panel-title">Pages read</h2><span class="mono faint">${data.evidence.length} pages</span></div><div class="panel-body flush">${APP.table(["component", "title", "url", "score"], data.evidence, (r, c) => c === "url" ? `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.url.slice(0, 60))}</a>` : esc(r[c] ?? ""))}</div></div>
+      <div class="panel" style="margin-top:16px"><div class="panel-head"><h2 class="panel-title">Pages found</h2><span class="mono faint">${data.evidence.length} pages · ${kept} read by the model · screened by System One</span></div><div class="panel-body flush">${APP.table(["component", "title", "url", "relevance", "attack", "kept"], data.evidence, (r, c) => c === "url" ? `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.url.slice(0, 50))}</a>` : c === "kept" ? (r.kept === 0 ? APP.pill("skipped", "warn") : APP.pill("read", "good")) : (c === "relevance" || c === "attack") ? (r[c] === null || r[c] === undefined ? "" : Number(r[c]).toFixed(2)) : esc(r[c] ?? ""))}</div></div>
       <div class="notice" style="margin-top:16px"><strong>Indicative, and labelled.</strong> A price on a search page is what that page showed at the time, not a fare held for this traveller. High confidence means the page stated a price for these dates; low means a "from" teaser.</div>`;
   },
 });
@@ -157,7 +160,21 @@ APP.register({
 });
 
 APP.register({
-  id: "ledger", n: 6, title: "Ledger, checkpoints and cost",
+  id: "system_one", n: 6, title: "System One: a model that decides",
+  blurb: "Claude reasons, plans and writes. Four decisions in this workflow have a closed set of answers, and a System One model (Jev) answers each with a probability in about a third of a second. The harness owns the threshold, falls back to a rule without the key, and logs every call.",
+  render: async (root) => {
+    const s = await APP.api("/api/system_one/status"); const data = await APP.loadTrip();
+    const decisions = data ? (await APP.api(`/api/trips/${data.trip_id}/decisions`)).decisions : [];
+    root.innerHTML = `<div class="notice ${s.available ? "good" : ""}" style="margin-top:20px"><strong>${esc(s.label)}.</strong> ${s.available ? "The text being judged goes to Typesafe: memories, search results, offers." : "Set TYPESAFE_API_KEY and start the appbook again. Until then the rules on the right decide."}</div>
+      <div class="panel" style="margin-top:16px"><div class="panel-head"><h2 class="panel-title">Four decisions</h2><span class="mono faint">thresholds: ${Object.entries(s.thresholds).map(([k, v]) => `${k} ${v}`).join(" · ")}</span></div><div class="panel-body flush">${APP.table(["decision", "question", "used_by", "fallback"], s.decisions_made_for)}</div></div>
+      <div class="panel" style="margin-top:16px"><div class="panel-head"><h2 class="panel-title">Decisions for ${esc(data?.trip_id || "no trip")}</h2><span class="mono faint">${decisions.length} calls</span></div><div class="panel-body flush">${APP.table(["kind", "summary", "questions", "seconds", "input_tokens", "outcome", "answers"], decisions, (r, c) => c === "answers" ? `<button class="secondary small" data-detail="${esc(r.decision_id)}">show</button>` : esc(r[c] ?? ""))}</div></div>
+      <div class="panel" style="margin-top:16px"><div class="panel-head"><h2 class="panel-title">What the decisions cost</h2><span class="mono faint">${s.price_per_million_input_tokens_usd} USD per million input tokens · output is free</span></div><div class="panel-body flush">${APP.table(["kind", "calls", "questions", "mean_seconds", "input_tokens", "usd"], s.costs)}</div></div>`;
+    $$("[data-detail]", root).forEach(b => b.onclick = () => { const d = decisions.find(x => x.decision_id === b.dataset.detail); APP.modal(`${d.kind}: ${d.summary}`, APP.json(d.detail)); });
+  },
+});
+
+APP.register({
+  id: "ledger", n: 7, title: "Ledger, checkpoints and cost",
   blurb: "What the database holds about the selected trip: every step in the ledger, the checkpoints LangGraph wrote, and what the model calls cost.",
   render: async (root) => {
     const data = await APP.loadTrip(); const s = APP.status;

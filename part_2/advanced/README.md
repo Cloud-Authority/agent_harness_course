@@ -6,7 +6,7 @@ and real web search, and adds a reading of MemoRizz's meta-harness from its sour
 
 | Mode | Use case | Notebook | Appbook | Live proof |
 |---|---|---|---|---|
-| **Workflow**: the steps are known before the run | Book a trip: flight, hotel and car from real web searches, one itinerary, approval, a booking saga, compensation, crash recovery | [`workflow/notebook/`](workflow/notebook/) | [`workflow/appbook/`](workflow/appbook/) · port 8040 | Two processes: the first is killed inside `book_flight`; the second continues and the flight is replayed, not booked twice |
+| **Workflow**: the steps are known before the run | Book a trip: flight, hotel and car from real web searches, one itinerary, approval, a booking saga, compensation, crash recovery; Jev (System One) decides which memories bear on the request, which pages to read, whether an offer honours a preference, and whether a fallback is like for like | [`workflow/notebook/`](workflow/notebook/) | [`workflow/appbook/`](workflow/appbook/) · port 8040 | Two processes: the first is killed inside `book_flight`; the second continues and the flight is replayed, not booked twice |
 | **Deep research**: the steps are decided as it runs | Write a survey-like paper on a subject: scholarly search, an evidence library by meaning, typed reading, a framework, sections in parallel, a referee pass, two approvals | [`deep_research/notebook/`](deep_research/notebook/) | [`deep_research/appbook/`](deep_research/appbook/) · port 8041 | A 16,000-word survey on agent harness engineering with 94 references, every one a page the harness read: [`deep_research/samples/`](deep_research/samples/) |
 | **Meta-harness**: one host, many agents | The trip ledger has a defect; pi plans, Codex implements behind an approval, Claude Code reviews; a comparison puts one question to two agents | [`metaharness/notebook/`](metaharness/notebook/) | notebook only | MemoRizz read from its source and run live, with memory, the run ledger and approvals in Oracle AI Database |
 
@@ -20,6 +20,7 @@ flowchart TB
   W --> T[Tavily] --> W
   R --> T
   W --> C[Claude Opus 5.5 · typed answers]
+  W --> J[Jev · System One · closed decisions]
   R --> C
   W --> G1{{review · interrupt}}
   R --> G2{{outline and publication · interrupt}}
@@ -60,6 +61,8 @@ The ONNX sentence embedder is loaded into the schema once, so every embedding in
 track is computed inside the database.
 
 **Keys.** `ANTHROPIC_API_KEY` and `TAVILY_API_KEY`, in the shell or the repository `.env`.
+`TYPESAFE_API_KEY` switches System One on in the trip workflow; without it the four
+decisions fall back to rules and every lesson still runs.
 The meta-harness notebook also uses Codex's own login, and pi and Hermes from
 `part_2/harness_done_for_you/.tools` when they are there.
 

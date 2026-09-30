@@ -22,7 +22,8 @@ LangGraph's checkpoint tables.
 | 3. Real search evidence | Every page read and every typed offer, with its confidence |
 | 4. The booking saga and compensation | Arm a provider fault, then approve: the flight is cancelled, the next hotel is chosen, the traveller is asked again |
 | 5. Crash and resume | Runs the two-process proof and streams its lines |
-| 6. Ledger, checkpoints and cost | The ledger, the checkpoint count, the model calls of this process; a reset |
+| 6. System One: a model that decides | The four closed decisions Jev answers, the calls made for the selected trip with their answers, and what they cost |
+| 7. Ledger, checkpoints and cost | The ledger, the checkpoint count, the model calls of this process; a reset |
 
 The data explorer under every view lists the workflow's tables, the memory store's tables
 (`TRIPMEM_*`) and LangGraph's checkpoint tables, read-only, newest rows first.
@@ -30,6 +31,8 @@ The data explorer under every view lists the workflow's tables, the memory store
 | Variable | Default | Purpose |
 |---|---|---|
 | `ANTHROPIC_API_KEY`, `TAVILY_API_KEY` | none | Required |
+| `TYPESAFE_API_KEY` | none | Switches System One (Jev) on; without it the four decisions fall back to rules |
+| `TRIP_SYSTEM_ONE` | `on` | `off` keeps System One off even with a key |
 | `ANTHROPIC_MODEL` | `claude-opus-5-5` | The model |
 | `ADV_ORA_DSN` | `127.0.0.1:1524/FREEPDB1` | The database |
 | `ADV_ORA_USER`, `ADV_ORA_PWD` | `PPA_ADVANCED`, a workshop default | The schema |

@@ -113,10 +113,13 @@ class MemoryReq(BaseModel):
 
 @app.get("/api/status")
 def status() -> dict:
+    from harness import system_one
     from harness.config import CFG
     from harness.llm import USAGE
     info = {"ready": STATE["ready"], "error": STATE["error"], "model": CFG.model,
-            "keys": {"anthropic": bool(os.getenv("ANTHROPIC_API_KEY")), "tavily": bool(os.getenv("TAVILY_API_KEY"))},
+            "keys": {"anthropic": bool(os.getenv("ANTHROPIC_API_KEY")), "tavily": bool(os.getenv("TAVILY_API_KEY")),
+                     "typesafe": bool(os.getenv("TYPESAFE_API_KEY"))},
+            "system_one": {"available": system_one.available(), "model": system_one.MODEL, "label": system_one.status()["label"]},
             "database": {"dsn": oracle.ORA.dsn, "user": oracle.ORA.user, "reachable": oracle.reachable()},
             "usage": dict(USAGE), "runs": {k: v for k, v in STATE["runs"].items()}}
     if STATE["ready"]:
@@ -170,6 +173,28 @@ def start(req: TripReq) -> dict:
     return {"trip_id": trip_id, "status": "running"}
 
 
+@app.get("/api/system_one/status")
+def system_one_status() -> dict:
+    ready()
+    from harness import system_one
+    return {**system_one.status(), "decisions_made_for": [
+        {"decision": "Which memories bear on this request?", "question": "noul, one for each memory",
+         "used_by": "recall_preferences", "fallback": "every memory is used"},
+        {"decision": "Which search results are worth reading, and which give orders?", "question": "two noul for each result",
+         "used_by": "the three searches", "fallback": "every result is read"},
+        {"decision": "Does each chosen offer honour each preference?", "question": "choice for each pair",
+         "used_by": "plan", "fallback": "no checks are made"},
+        {"decision": "May a fallback be booked on the approval already given?", "question": "one noul",
+         "used_by": "compensate", "fallback": "the traveller is always asked"}]}
+
+
+@app.get("/api/trips/{trip_id}/decisions")
+def trip_decisions(trip_id: str) -> dict:
+    ready()
+    from harness import system_one
+    return {"trip_id": trip_id, "decisions": system_one.decisions(trip_id, limit=100)}
+
+
 @app.get("/api/trips/{trip_id}")
 def trip(trip_id: str) -> dict:
     ready()
@@ -177,8 +202,8 @@ def trip(trip_id: str) -> dict:
     out = graph.outcome(trip_id)
     run = STATE["runs"].get(trip_id, {})
     return {**out, "busy": run.get("busy", False), "error": run.get("error"), "ledger": tables.trip_ledger(trip_id),
-            "evidence": oracle.rows("SELECT component, query, url, title, score FROM trip_evidence WHERE trip_id = :t "
-                                    "ORDER BY fetched_at", {"t": trip_id}),
+            "evidence": oracle.rows("SELECT component, query, url, title, score, relevance, attack, kept FROM trip_evidence "
+                                    "WHERE trip_id = :t ORDER BY fetched_at", {"t": trip_id}),
             "offers": oracle.rows("SELECT offer_id, component, provider, summary, price, currency, price_gbp, confidence, "
                                   "evidence_id FROM trip_offers WHERE trip_id = :t ORDER BY component, price_gbp", {"t": trip_id})}
 
